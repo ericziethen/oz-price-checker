@@ -10,6 +10,7 @@ cache: pip
 branches:
   only:
   - master      # Build if the branch is the master branch
+  - development
   - /^v.*$/     # Support building Tags commits on any branch (starting with 'v' in this case).
 
 matrix:
