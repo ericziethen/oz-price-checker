@@ -1,0 +1,59 @@
+language: python
+
+cache: pip
+
+# TODO
+# Create athe Same Travis with Build Stages, so only deploy if build ok on all jobs
+# https://docs.travis-ci.com/user/build-stages/
+
+# Limit under which Conditions we run Travis
+branches:
+  only:
+  - master      # Build if the branch is the master branch
+  - development
+  - /^v.*$/     # Support building Tags commits on any branch (starting with 'v' in this case).
+
+matrix:
+  include:
+  - name: "Linux, Python 3.6"
+    os: linux
+    dist: xenial
+    python: "3.6"
+  - name: "Linux, Python 3.7.4"
+    os: linux
+    dist: xenial
+    python: "3.7.4"
+    env: DEPLOY_ENABLED=True
+
+#  - name: "Windows, Python 3.7.4 (x64)"
+#    os: windows
+#    language: sh
+#    python: "3.7.4"
+#    before_install: choco install python --version=3.7.4
+#    env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+
+install:
+- python --version --version
+- python -m pip install --upgrade pip setuptools wheel
+# don't use the '--upgrade' to not upgrade pinned requirements with generic ones
+- pip install -r requirements.txt
+
+# Capture some information
+- pip list
+
+
+script:
+# Run Tests
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then dev/run_tests.bat travis-ci; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./dev/run_tests.sh travis-ci; fi
+
+# Run Linting
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then dev/run_linters.bat; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./dev/run_linters.sh; fi
+
+# Run Package Safety Checks
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then dev/check_package_safety_bare.bat; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./dev/check_package_safety.sh; fi
+
+after_success:
+- codecov
