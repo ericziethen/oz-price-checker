@@ -12,7 +12,7 @@ set PYTHONPATH=%PYTHONPATH%;%MODULE_PATH%
 
 : Pylint requires __init__.py files to run, but the Django root doesn't have it so we have to specify the folders separately
 call:run_pylint "%MODULE_PATH%\ozpricechecker"
-rem call:run_pylint "%MODULE_PATH%\##APP NAME##"
+call:run_pylint "%MODULE_PATH%\pricefinderapp"
 
 if defined ERROR_FOUND (
     goto exit_error

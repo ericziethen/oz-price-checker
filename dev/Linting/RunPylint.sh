@@ -39,7 +39,7 @@ ERROR_LIST=''
 export PYTHONPATH=$PYTHONPATH:$MODULE_PATH
 
 run_pylint "$MODULE_PATH/ozpricechecker"
-# run_pylint "$MODULE_PATH/##APP NAME##"
+run_pylint "$MODULE_PATH/pricefinderapp"
 
 echo "ERROR_FOUND: '$ERROR_FOUND'"
 if [ $ERROR_FOUND == "false" ];
