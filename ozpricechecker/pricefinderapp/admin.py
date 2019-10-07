@@ -1,6 +1,9 @@
 from django.contrib import admin
-from .models import Currency, Store, StoreProduct, ProductPrice, UserProduct, ScrapeType
-from .models import ScrapeTemplate, UserNewsLetter, NewsLetterUserProduct, NewsLetterTime
+from .models import (
+    Currency, Store, StoreProduct, ProductPrice,
+    UserProduct, ScrapeType, ScrapeTemplate,
+    UserNewsLetter, NewsLetterUserProduct, NewsLetterTime
+)
 
 
 # Register your models here.

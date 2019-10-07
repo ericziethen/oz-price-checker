@@ -5,26 +5,20 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Currency(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=3, unique=True)
 
     def __str__(self):
         return self.name
 
-    class Meta:
-        db_table = "currency"
-
 
 class Store(models.Model):
-    name = models.CharField(max_length=30)
-    prod_base_url = models.CharField(max_length=250)
+    name = models.CharField(max_length=30, unique=True)
+    prod_base_url = models.CharField(max_length=250, unique=True)
     dynamic_page = models.BooleanField(default=False)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        db_table = "Store"
 
 
 class StoreProduct(models.Model):
@@ -35,9 +29,6 @@ class StoreProduct(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        db_table = "StoreProduct"
-
 
 class ProductPrice(models.Model):
     store_prod_id = models.ForeignKey(StoreProduct, on_delete=models.CASCADE)
@@ -47,17 +38,11 @@ class ProductPrice(models.Model):
     # def __str__(self):
     #     return self.price
 
-    class Meta:
-        db_table = "ProductPrice"
-
 
 class UserProduct(models.Model):
     store_prod_id = models.ForeignKey(StoreProduct, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     threshhold = models.IntegerField()
-
-    class Meta:
-        db_table = "Userproduct"
 
 
 class ScrapeType(models.Model):
@@ -66,25 +51,19 @@ class ScrapeType(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        db_table = "ScrapeType"
-
 
 class ScrapeTemplate(models.Model):
     store_id = models.ForeignKey(Store, on_delete=models.CASCADE)
     scrape_type = models.ForeignKey(ScrapeType, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
 
     def __str__(self):
         return self.name
 
-    class Meta:
-        db_table = "ScrapeTemplate"
-
 
 class UserNewsLetter(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
 
     DEFINED = 'DF'
     UNDEFINED = 'UD'
@@ -101,16 +80,10 @@ class UserNewsLetter(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        db_table = "UserNewsLetter"
-
 
 class NewsLetterUserProduct(models.Model):
     user_newsletter_id = models.ForeignKey(UserNewsLetter, on_delete=models.CASCADE)
     user_product_id = models.ForeignKey(UserProduct, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "NewsLetterUserProduct"
 
 
 class NewsLetterTime(models.Model):
