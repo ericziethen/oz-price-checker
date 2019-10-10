@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Currency, Store, StoreProduct, ProductPrice,
+    Currency, Store, Product, ProductPrice,
     UserProduct, ScrapeType, ScrapeTemplate,
     UserNewsLetter, NewsLetterUserProduct, NewsLetterTime
 )
@@ -9,7 +9,7 @@ from .models import (
 # Register your models here.
 admin.site.register(Currency)
 admin.site.register(Store)
-admin.site.register(StoreProduct)
+admin.site.register(Product)
 admin.site.register(ProductPrice)
 admin.site.register(UserProduct)
 admin.site.register(ScrapeType)
