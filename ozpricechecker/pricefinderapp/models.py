@@ -22,8 +22,11 @@ class Store(models.Model):
 
 class Product(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    prod_url = models.TextField(unique=True)
+    prod_url = models.TextField()
     name = models.CharField(max_length=30)
+
+    class Meta:
+        unique_together = (('store', 'prod_url'),)
 
     def __str__(self):
         return self.name
