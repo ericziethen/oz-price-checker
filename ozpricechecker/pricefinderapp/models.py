@@ -32,7 +32,7 @@ class Product(models.Model):
 class ProductPrice(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date_time = models.DateTimeField(auto_now=True)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=12, decimal_places=2)
 
     # def __str__(self):
     #     return self.price
@@ -41,7 +41,7 @@ class ProductPrice(models.Model):
 class UserProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    threshhold = models.DecimalField(max_digits=5, decimal_places=2)
+    threshhold = models.DecimalField(max_digits=12, decimal_places=2)
 
     class Meta:
         unique_together = (('product', 'user'),)
@@ -57,7 +57,10 @@ class ScrapeType(models.Model):
 class ScrapeTemplate(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     scrape_type = models.ForeignKey(ScrapeType, on_delete=models.CASCADE)
-    xpath = models.TextField(unique=True)
+    xpath = models.TextField()
+
+    class Meta:
+        unique_together = (('store', 'scrape_type'),)
 
     def __str__(self):
         return self.xpath
@@ -79,13 +82,19 @@ class UserNewsLetter(models.Model):
     #     default=UNDEFINED,
     # )
 
+    class Meta:
+        unique_together = (('user', 'name'),)
+
     def __str__(self):
         return self.name
 
 
 class NewsLetterUserProduct(models.Model):
-    user_newsletter_id = models.ForeignKey(UserNewsLetter, on_delete=models.CASCADE)
+    user_newsletter = models.ForeignKey(UserNewsLetter, on_delete=models.CASCADE)
     user_product = models.ForeignKey(UserProduct, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('user_newsletter', 'user_product'),)
 
 
 class NewsLetterTime(models.Model):
