@@ -3,10 +3,13 @@ A Price checker for various webstores
 
 <table>
     <tr>
-        <td>Travis CI</td>
-        <td><img src='https://travis-ci.org/ericziethen/ozpricechecker.svg?branch=master'></td>
-        <td>Coverage</td>
+        <td>Travis CI - Master</td>
+        <td><img src='https://travis-ci.com/ericziethen/oz-price-checker.svg?branch=master'></td>
+        <td>Travis CI - Development</td>
+        <td><img src='https://travis-ci.com/ericziethen/oz-price-checker.svg?branch=development'></td>
+        <td>Coverage - Master</td>
         <td><img src='https://codecov.io/gh/ericziethen/ozpricechecker/branch/master/graph/badge.svg'></td>
+        <td>Coverage - Development</td>
+        <td><img src='https://codecov.io/gh/ericziethen/ozpricechecker/branch/development/graph/badge.svg'></td>
     </tr>
 </table>
-
