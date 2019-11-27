@@ -10,7 +10,7 @@ set ERROR_LIST=
 
 echo ### Start Testing ###
 call:run_tester "Pytest"        "%TEST_DIR%\RunPytest.bat"
-call:run_tester "DjangoTests"   "%TEST_DIR%\RunDjangoTests.bat"
+rem call:run_tester "DjangoTests"   "%TEST_DIR%\RunDjangoTests.bat"
 echo ### Testing finished ###
 
 if defined ERROR_FOUND (

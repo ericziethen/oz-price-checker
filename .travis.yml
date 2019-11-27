@@ -15,21 +15,20 @@ branches:
 
 matrix:
   include:
-  - name: "Linux, Python 3.6"
+  - name: "Linux, Python 3.7.5"
     os: linux
     dist: xenial
-    python: "3.6"
-  - name: "Linux, Python 3.7.4"
+    python: "3.7.5"
+  - name: "Linux, Python 3.8"
     os: linux
     dist: xenial
-    python: "3.7.4"
-    env: DEPLOY_ENABLED=True
+    python: "3.8"
 
-#  - name: "Windows, Python 3.7.4 (x64)"
+#  - name: "Windows, Python 3.8 (x64)"
 #    os: windows
 #    language: sh
-#    python: "3.7.4"
-#    before_install: choco install python --version=3.7.4
+#    python: "3.8"
+#    before_install: choco install python --version=3.8
 #    env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
 
 install:

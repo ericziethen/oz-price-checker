@@ -9,6 +9,7 @@ pylint-django
 # Testing tools
 pytest
 pytest-cov
+pytest-django
 codecov
 safety
 

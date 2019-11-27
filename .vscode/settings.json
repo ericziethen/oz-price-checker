@@ -18,13 +18,13 @@
           "--load-plugins=pylint_django"
         ],
 
-    "python.linting.pep8Enabled": true,
-    "python.linting.pep8Path": "pycodestyle",
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.pycodestylePath": "pycodestyle",
 
     "python.linting.pydocstyleEnabled": false,
 
     "python.linting.banditEnabled": true,
 
-    "python.linting.mypyEnabled": false,
+    "python.linting.mypyEnabled": true,
     "python.envFile": "${workspaceFolder}/.env_vars"
 }

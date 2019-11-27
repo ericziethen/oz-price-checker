@@ -36,7 +36,7 @@ ERROR_LIST=''
 
 echo "### Start Testing ###"
 run_tester "Pytest"         "$TEST_DIR/RunPytest.sh"
-run_tester "DjangoTests"    "$TEST_DIR/RunDjangoTests.sh"
+# run_tester "DjangoTests"    "$TEST_DIR/RunDjangoTests.sh"
 echo "### Testing finished ###"
 
 echo "ERROR_FOUND: '$ERROR_FOUND'"
