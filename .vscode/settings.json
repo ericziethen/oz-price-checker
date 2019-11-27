@@ -18,8 +18,8 @@
           "--load-plugins=pylint_django"
         ],
 
-    "python.linting.pep8Enabled": true,
-    "python.linting.pep8Path": "pycodestyle",
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.pycodestylePath": "pycodestyle",
 
     "python.linting.pydocstyleEnabled": false,
 

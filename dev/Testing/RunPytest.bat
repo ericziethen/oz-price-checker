@@ -6,6 +6,7 @@ set PROJ_MAIN_DIR=%~dp0../..
 set PACKAGE_ROOT=ozpricechecker
 
 set PYTHONPATH=%PYTHONPATH%;%PACKAGE_ROOT%
+pushd "%PROJ_MAIN_DIR%"
 
 rem To see how to loop through multiple Command Line Arguments: https://www.robvanderwoude.com/parameters.php
 
@@ -20,7 +21,7 @@ if "%1"=="travis-ci" (
 :local_setup
 
 :run_tests
-pytest --rootdir="%PROJ_MAIN_DIR%" --cov="%PACKAGE_ROOT%"
+pytest --cov="%PACKAGE_ROOT%"
 set return_code=%errorlevel%
 if %return_code% equ 0 (
     echo *** No Pytest Issues Found
@@ -38,11 +39,13 @@ rem http://blog.thedigitalcatonline.com/blog/2018/07/05/useful-pytest-command-li
 rem https://www.patricksoftwareblog.com/python-unit-testing-structuring-your-project/
 
 :exit_error
+popd
 endlocal
 echo exit /B 1
 exit /B 1
 
 :exit_ok
+popd
 endlocal
 echo exit /B 0
 exit /B 0

@@ -7,8 +7,9 @@ PROJ_MAIN_DIR=$SCRIPT_PATH/../..
 echo SCRIPT_PATH: $SCRIPT_PATH
 echo PROJ_MAIN_DIR: $PROJ_MAIN_DIR
 
+pushd "$PROJ_MAIN_DIR/$PACKAGE_ROOT"
 # Test directories are specified in Pytest.ini
-python "$PROJ_MAIN_DIR/$PACKAGE_ROOT/manage.py" test
+python manage.py test
 return_code=$?
 
 if [[ $return_code -eq  0 ]];
@@ -19,4 +20,5 @@ else
 fi
 
 echo "exit $return_code"
+popd
 exit $return_code

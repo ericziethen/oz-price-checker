@@ -35,7 +35,7 @@ ERROR_FOUND="false"
 ERROR_LIST=''
 
 echo "### Start Linting ###"
-#run_linter "Bandit"        "$LINTER_DIR/RunBandit.sh"
+run_linter "Bandit"        "$LINTER_DIR/RunBandit.sh"
 #run_linter "MyPy"          "$LINTER_DIR/RunMyPy.sh"
 run_linter "Pycodestyle"   "$LINTER_DIR/RunPycodestyle.sh"
 #run_linter "Pydocstyle"    "$LINTER_DIR/RunPydocstyle.sh"

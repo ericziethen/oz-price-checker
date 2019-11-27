@@ -5,8 +5,9 @@ setlocal
 set PROJ_MAIN_DIR=%~dp0../..
 set PACKAGE_ROOT=ozpricechecker
 
+pushd "%PROJ_MAIN_DIR%\%PACKAGE_ROOT%"
 :run_django_test
-python "%PROJ_MAIN_DIR%\%PACKAGE_ROOT%\manage.py" test
+python manage.py test
 set return_code=%errorlevel%
 if %return_code% equ 0 (
     echo *** No Test Issues Found
@@ -17,11 +18,13 @@ if %return_code% equ 0 (
 )
 
 :exit_error
+popd
 endlocal
 echo exit /B 1
 exit /B 1
 
 :exit_ok
+popd
 endlocal
 echo exit /B 0
 exit /B 0
