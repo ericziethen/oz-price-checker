@@ -1,0 +1,17 @@
+# Linters for Development
+bandit
+mypy
+pycodestyle
+pydocstyle
+pylint
+pylint-django
+
+# Testing tools
+pytest
+pytest-cov
+pytest-django
+codecov
+safety
+
+
+
