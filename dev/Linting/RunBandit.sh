@@ -10,7 +10,7 @@ echo SCRIPT_PATH: $SCRIPT_PATH
 echo PROJ_MAIN_DIR: $PROJ_MAIN_DIR
 echo MODULE_PATH: $MODULE_PATH
 
-bandit -r "$MODULE_PATH" --exclude "ozpricechecker/tests/"
+bandit -r "$MODULE_PATH" --exclude "ozpricechecker/tests/,ozpricechecker/pricefinderapp/tests/"
 return_code=$?
 
 if [[ $return_code -eq  0 ]];
