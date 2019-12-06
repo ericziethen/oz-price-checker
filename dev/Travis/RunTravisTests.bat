@@ -23,7 +23,7 @@ echo "No Merging Issue"
 goto exit_ok
 
 :branch_issue
-echo "*** Cannot Merge Branch "%FROM_BRANCH%" into "%TRAVIS_BRANCH%""
+echo "*** Cannot Merge Branch '%FROM_BRANCH%' into '%TRAVIS_BRANCH%'"
 goto exit_error
 
 :exit_error

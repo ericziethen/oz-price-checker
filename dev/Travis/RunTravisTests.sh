@@ -7,7 +7,7 @@ echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, FROM_BRANCH=$FROM_BRANCH"
 
 if [[ ($TRAVIS_BRANCH != $FROM_BRANCH) && ($TRAVIS_BRANCH == 'master') && ($FROM_BRANCH != 'development') ]];
 then
-    echo "*** Cannot Merge Branch "$FROM_BRANCH" into "$TRAVIS_BRANCH""
+    echo "*** Cannot Merge Branch '$FROM_BRANCH' into '$TRAVIS_BRANCH'"
     exit 1
 else
     echo "No Merging Issue"
