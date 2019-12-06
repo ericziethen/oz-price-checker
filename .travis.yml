@@ -32,6 +32,10 @@ matrix:
 #    env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
 
 install:
+# Check if the Merge Operation is allowed
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then dev/Travis/RunTravisTests.bat; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./dev/Travis/RunTravisTests.sh; fi
+
 - python --version --version
 - python -m pip install --upgrade pip setuptools wheel
 # don't use the '--upgrade' to not upgrade pinned requirements with generic ones
