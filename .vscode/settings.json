@@ -21,7 +21,7 @@
     "python.linting.pycodestyleEnabled": true,
     "python.linting.pycodestylePath": "pycodestyle",
 
-    "python.linting.pydocstyleEnabled": false,
+    "python.linting.pydocstyleEnabled": true,
 
     "python.linting.banditEnabled": true,
 
