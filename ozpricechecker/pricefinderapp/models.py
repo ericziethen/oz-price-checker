@@ -1,4 +1,4 @@
-"""ozpricechecker modesl defination."""
+"""ozpricechecker models defination."""
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -67,7 +67,7 @@ class UserProduct(models.Model):
 
 
 class ScrapeType(models.Model):
-    """Product price details."""
+    """Scrape type master."""
 
     name = models.CharField(max_length=30, unique=True)
 
@@ -110,7 +110,7 @@ class UserNewsLetter(models.Model):
     # )
 
     class Meta:
-        """Product price details."""
+        """UserNewsLetter meta data."""
 
         unique_together = (('user', 'name'),)
 
