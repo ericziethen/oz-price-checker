@@ -2,3 +2,5 @@
 # Django Related
 django
 
+# Network Related
+ezscrape
