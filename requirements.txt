@@ -11,6 +11,8 @@ colorama==0.4.1
 coverage==4.5.4
 Django==3.0
 dparse==0.4.1
+ezscrape==0.3
+fake-useragent==0.1.11
 gitdb2==2.0.6
 GitPython==3.0.5
 idna==2.8
@@ -37,6 +39,7 @@ pytz==2019.3
 PyYAML==5.2
 requests==2.22.0
 safety==1.8.5
+selenium==3.141.0
 six==1.13.0
 smmap2==2.0.5
 snowballstemmer==2.0.0
