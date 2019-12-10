@@ -26,10 +26,11 @@ class StoreCreateForm(ModelForm):
         try:
             url_validator(base_url)
         except ValidationError as error:
-            raise ValidationError(F'Invalid Url: {error} - Dont forget to include the schema like http or https')
+            raise ValidationError(F'Invalid Url: {error} - Dont forget to include the schema like http or https',
+                                  code='invalid_format')
 
         # Check if we can reach the url
         if not check_url(base_url, local_only=False):
-            raise ValidationError(F'Cannot Reach URL')
+            raise ValidationError(F'Cannot Reach URL', code='cannot_reach_url')
 
         return base_url
