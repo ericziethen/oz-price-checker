@@ -2,7 +2,6 @@
 
 from unittest import mock
 
-from django.forms import ValidationError
 from django.test import TestCase
 
 from pricefinderapp.forms import StoreCreateForm
