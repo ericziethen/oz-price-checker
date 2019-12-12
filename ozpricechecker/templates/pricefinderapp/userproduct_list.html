@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block content %}
@@ -13,3 +14,21 @@
     {% endfor %} 
 
 {% endblock %}
+=======
+<!-- {% extends "base.html" %} -->
+
+<!-- {% block content %} -->
+    <h1  align="center">OZ Price Checker</h1>
+
+    {% for user_product in user_products %}
+    <div>
+        <ul>
+            <li><strong>User Product:</strong> {{ user_product.product }}</li>
+            <li><strong>User:</strong> {{ user_product.user }}</li>
+            <li><strong>Product price threshhold:</strong> {{ user_product.threshhold }}</li>
+          </ul>
+    </div>
+    {% endfor %} 
+
+<!-- {% endblock %} -->
+>>>>>>> Home page list view
