@@ -10,10 +10,8 @@ class UserProductListView(ListView):
 
     model = UserProduct
     paginate_by = 100
+    template_name = 'pricefinderapp/userproduct_list.html'
 
-
-# def index(request):
-#     """View function for home page of site."""
-#     user_products = UserProduct.objects.all()
-#     print(user_products)
-#     return render(request, 'index.html', {'user_products': user_products})
+    def get_queryset(self):
+        """Only for current user."""
+        return UserProduct.objects.filter(user=self.request.user)
