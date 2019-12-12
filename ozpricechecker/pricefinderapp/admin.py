@@ -9,6 +9,13 @@ from .models import (
 )
 
 
+class ScrapeTemplateAdmin(admin.ModelAdmin):
+    """Admin model for ScrapeTemplate."""
+
+    list_display = ('store', 'scrape_type', 'xpath')
+    list_filter = ('store', 'scrape_type')
+
+
 class StoreAdmin(admin.ModelAdmin):
     """Admin model for Store."""
 
@@ -25,7 +32,7 @@ admin.site.register(Product)
 admin.site.register(ProductPrice)
 admin.site.register(UserProduct)
 admin.site.register(ScrapeType)
-admin.site.register(ScrapeTemplate)
+admin.site.register(ScrapeTemplate, ScrapeTemplateAdmin)
 
 admin.site.register(UserNewsLetter)
 admin.site.register(NewsLetterUserProduct)
