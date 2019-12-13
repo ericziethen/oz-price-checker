@@ -10,9 +10,13 @@ def test_page_found():
     assert result[1] is None
 
 
+def test_page_not_found():
+    result = scrape_products.scrape_product(common.TEST_PAGE_NOT_FOUNT)
+    assert result[0] is None
+    assert result[1] is not None
+
 
 """
-def test_page_not_found()
 
 def test_get_price_from_html()
 
