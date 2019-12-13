@@ -1,6 +1,7 @@
 
 # parsing
 defusedxml
+lxml
 
 # Django Related
 django
