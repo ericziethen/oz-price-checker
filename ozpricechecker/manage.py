@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 def setup_logger():
+    """Set up the management logger."""
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)

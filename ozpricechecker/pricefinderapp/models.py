@@ -44,6 +44,7 @@ class Product(models.Model):
 
     @property
     def full_url(self):
+        """Get the full url for this product."""
         base_url = self.store.prod_base_url
         if not base_url.endswith('/'):
             base_url += '/'

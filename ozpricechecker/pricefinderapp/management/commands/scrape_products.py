@@ -1,4 +1,4 @@
-""" Command to scrape Product informatiuon."""
+"""Command to scrape Product informatiuon."""
 
 import logging
 import time
@@ -12,8 +12,8 @@ from ezscrape.scraping.core import ScrapeConfig
 from ezscrape.scraping.core import ScrapeStatus
 
 from defusedxml import lxml as defused_lxml
-import lxml
-import lxml.html
+import lxml  # nosec
+import lxml.html  # nosec
 
 from pricefinderapp.models import Product, ProductPrice, ScrapeTemplate
 
@@ -29,6 +29,7 @@ class Command(BaseCommand):
 
 
 def process_products(scrape_delay):
+    """Process the products with the given delay."""
     for prod in Product.objects.all():
         xpath_dic = {}
 
@@ -42,7 +43,7 @@ def process_products(scrape_delay):
             xpath_dic['Price'] = template.xpath
 
         # Scrape the data
-        result_dic = scrape_url(prod.full_url, xpath_dic)
+        result_dic = process_url(prod.full_url, xpath_dic)
         prod_price = ProductPrice.objects.create(product=prod)
 
         if 'values' in result_dic:
@@ -61,6 +62,7 @@ def process_products(scrape_delay):
 
 
 def str_to_decimal_price(str_val):
+    """Convert a String to a decimal Price."""
     result = None
 
     try:
@@ -74,7 +76,8 @@ def str_to_decimal_price(str_val):
     return result
 
 
-def scrape_url(url, xpath_dic):
+def process_url(url, xpath_dic):
+    """Scrape the url and retrieve the xpath values."""
     logger.info(F'Scraping Url: "{url}"')
     result_dic = {}
 
@@ -104,6 +107,7 @@ def scrape_url(url, xpath_dic):
 
 
 def scrape_product_url(url):
+    """Scrape the online Product url."""
     result_html = None
     error_msg = None
 
@@ -117,11 +121,12 @@ def scrape_product_url(url):
 
 
 def get_xpath_from_html(xpath, html_source):
-    #logger.info(F'get_xpath_from_html Xpath: {xpath} HTML:\n">>>>>{html_source}<<<<<"')
+    """Get the xpath value from the given html."""
+    # logger.info(F'get_xpath_from_html Xpath: {xpath} HTML:\n">>>>>{html_source}<<<<<"')
     try:
-        root = defused_lxml.fromstring(html_source)        
+        root = defused_lxml.fromstring(html_source)
         result = root.xpath(xpath)
-    except (lxml.etree.XPathEvalError, lxml.etree.XMLSyntaxError) as error:
+    except (lxml.etree.XPathEvalError, lxml.etree.XMLSyntaxError) as error:  # pylint: disable=c-extension-no-member
         raise ValueError(F'Xpath Error for "{xpath}" - {type({error})}: {error}')
     else:
         if result:

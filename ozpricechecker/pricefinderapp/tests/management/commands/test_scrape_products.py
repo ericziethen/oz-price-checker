@@ -1,6 +1,6 @@
-import pytest
-
 from decimal import Decimal
+
+import pytest
 
 from django.test import TestCase
 
@@ -42,7 +42,7 @@ def test_invalid_xpath():
 
 def test_no_xpath_values_specified():
     with pytest.raises(ValueError):
-        scrape_products.scrape_url(common.TEST_PAGE_NOT_FOUND, {})
+        scrape_products.process_url(common.TEST_PAGE_NOT_FOUND, {})
 
 
 def test_invalid_url():
@@ -51,7 +51,7 @@ def test_invalid_url():
         'price-not-found': '//price-not-found/text()',
         'invalid_xpath': common.INVALID_XPATH
     }
-    result = scrape_products.scrape_url(common.TEST_PAGE_NOT_FOUND, xpath_dic)
+    result = scrape_products.process_url(common.TEST_PAGE_NOT_FOUND, xpath_dic)
 
     assert 'values' not in result
     assert result['error']
@@ -63,7 +63,7 @@ def test_price_from_url():
         'price-not-found': '//price-not-found/text()',
         'invalid_xpath': common.INVALID_XPATH
     }
-    result = scrape_products.scrape_url(common.TEST_PAGE_WITH_PRICE_20, xpath_dic)
+    result = scrape_products.process_url(common.TEST_PAGE_WITH_PRICE_20, xpath_dic)
 
     print('RESULT', result)
 
@@ -101,7 +101,7 @@ INVALID_DECIMAL_PRICES = [
     ('-2.3'),
 ]
 @pytest.mark.parametrize('str_val', INVALID_DECIMAL_PRICES)
-def test_valid_decimal(str_val):
+def test_invalid_decimal(str_val):
     assert scrape_products.str_to_decimal_price(str_val) is None
 
 
