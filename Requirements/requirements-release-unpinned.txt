@@ -1,4 +1,7 @@
 
+# parsing
+beautifulsoup4
+
 # Django Related
 django
 
