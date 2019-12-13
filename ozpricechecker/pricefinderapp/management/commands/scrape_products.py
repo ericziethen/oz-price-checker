@@ -1,6 +1,7 @@
 """ Command to scrape Product informatiuon."""
 
 import logging
+import time
 
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
@@ -28,52 +29,33 @@ class Command(BaseCommand):
 
 
 def process_products():
-    scrape_type_fields = {
-        'Price': 'price'
-    }
-    '''
     for prod in Product.objects.all():
-
         xpath_dic = {}
-        # get all xpath we support
-        for template in ScrapeTemplate.objects.filter(store=prod.store):
-            if template.scrape_type.name in scrape_type_fields:
-                xpath_dic[template.scrape_type.name] = template.xpath
+
+        store = prod.store
+
+        if store.dynamic_page:
+            raise NotImplementedError('Need to enable Selenium Scraping to support Dynamic Pages')
+
+        # get all price xpath for now
+        for template in ScrapeTemplate.objects.filter(store=prod.store, scrape_type__name='Price'):
+            xpath_dic['Price'] = template.xpath
 
         # Scrape the data
         result_dic = scrape_url(prod.full_url, xpath_dic)
         prod_price = ProductPrice.objects.create(product=prod)
 
         if 'values' in result_dic:
-            for name, result in result_dic['values'].items():
-                if 'value' in result:
-                    pass
-                else:
-                    pass
-        else:
-            logger.error(F'Scrape Error: {result["error"]}')
-
-
-
-        for result in result_dic:
-            if 'values' in result:
-                update = True
-                if 'value' in result['values'][]
-
-                
-                setattr(prod_price, scrape_type_fields[result], )
-                prod_price
-
+            if 'value' in result_dic['values']['Price']:
+                prod_price.price = str_to_decimal_price(result_dic['values']['Price']['value'])
             else:
-                logger.error(F'Scrape Error: {result["error"]}')
-
-        if update:
+                prod_price.error = result_dic['values']['Price']['error']
             prod_price.save()
+        else:
+            logger.error(F'Scrape Error: {result_dic["error"]}')
 
-    # TODO - add to db
-
-    # TODO - add a scrape delay
-    '''
+        # delay between scrape attempts
+        time.sleep(2)
 
 
 def str_to_decimal_price(str_val):
