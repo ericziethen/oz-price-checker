@@ -4,7 +4,7 @@ from django.views.generic.list import ListView
 from pricefinderapp.models import UserProduct
 
 
-class UserProductListView(ListView):
+class UserProductListView(ListView): # pylint: disable=too-many-ancestors
     """User product list view."""
 
     model = UserProduct
