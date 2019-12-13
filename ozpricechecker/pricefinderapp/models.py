@@ -48,9 +48,12 @@ class ProductPrice(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date_time = models.DateTimeField(auto_now=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
+    error = models.CharField(max_length=250, blank=True, null=True)
 
-    # def __str__(self):
-    #     return self.price
+    class Meta:
+        """ProductPrice meta data."""
+
+        unique_together = (('product', 'date_time'),)
 
 
 class UserProduct(models.Model):
