@@ -2,7 +2,6 @@
 omit =
     */tests/*
     *__init__*
-    */management/commands/*
     */migrations/*
     ozpricechecker\utils\project_logger.py
 
@@ -10,6 +9,5 @@ omit =
 omit =
     */tests/*
     *__init__*
-    */management/commands/*
     */migrations/*
     ozpricechecker\utils\project_logger.py
