@@ -4,7 +4,9 @@ from decimal import Decimal
 
 from django.test import TestCase
 
-from pricefinderapp.models import Currency, Product, ScrapeTemplate, ScrapeType, Store
+from pricefinderapp.models import (
+    Currency, Product, ProductPrice, ScrapeTemplate, ScrapeType, Store
+)
 from pricefinderapp.management.commands import scrape_products
 from tests import common
 
@@ -108,25 +110,33 @@ class TestScrapeProducts(TestCase):
     def setUp(self):
         self.currency = Currency.objects.create(name='AUD')
         self.scrape_type_price = ScrapeType.objects.create(name='Price')
-        self.store = Store.objects.create(name='Woolworths', currency=self.currency, dynamic_page=True)
+        self.store = Store.objects.create(name='Woolworths', currency=self.currency, dynamic_page=False)
         ScrapeTemplate.objects.create(
             store=self.store, scrape_type=self.scrape_type_price,
             xpath=common.TEST_PAGE_WITH_PRICE_20_XPATH)
 
-    @pytest.mark.eric
     def test_dynamic_pages_not_implemented(self):
         self.store.dynamic_page = True
         self.store.save()
 
-        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Dynamic Tomatoes')
+        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
         with self.assertRaises(NotImplementedError):
             scrape_products.process_products()
 
+    @pytest.mark.eric
+    def test_scrape_products_good(self):
+        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_100, name='Tomatoes 100')
+        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
+
+        self.assertEqual(ProductPrice.objects.all().count(), 0)
+        scrape_products.process_products()
+        self.assertEqual(ProductPrice.objects.all().count(), 2)
+
+        price_list = ProductPrice.objects.values_list('price', flat=True)
+        self.assertListEqual(sorted(price_list), [Decimal('20.00'), Decimal('100.00')])
+
 
     '''
-    def test_scrape_products_good(self):
-        self.assertFalse(True)
-
     def test_scrape_product_invalid_xpath(self):
         self.assertFalse(True)
 
