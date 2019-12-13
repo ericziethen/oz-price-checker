@@ -1,5 +1,7 @@
 import pytest
 
+from decimal import Decimal
+
 from django.test import TestCase
 
 from pricefinderapp.models import Currency, Product, Store
@@ -73,16 +75,47 @@ def test_price_from_url():
     assert result['values']['invalid_xpath']['error']
 
 
+VALID_DECIMAL_PRICES = [
+    ('0', '0.00'),
+    ('0.0', '0.00'),
+    ('0.1', '0.10'),
+    ('1', '1.00'),
+    ('1.0', '1.00'),
+    ('15.23', '15.23'),
+    ('15.234', '15.23'),
+    ('15.235', '15.24'),
+    ('15.236', '15.24'),
+]
+@pytest.mark.eric
+@pytest.mark.parametrize('str_val, expected_val', VALID_DECIMAL_PRICES)
+def test_valid_decimal(str_val, expected_val):
+    assert scrape_products.str_to_decimal_price(str_val) == Decimal(expected_val)
+
+
+#def test_invalid_decimals()
+
+
+
+
+
+
+
+
+
+
 class TestScrapeProducts(TestCase):
 
     def test_dynamic_pages_not_implemented(self):
         self.assertFalse(True)
 
-    def test_scrape_product(self):
+    def test_scrape_products_good(self):
         self.assertFalse(True)
 
+    def test_scrape_product_invalid_xpath(self):
+        self.assertFalse(True)
 
-
+    def test_scrape_product_url_not_found(self):
+        self.assertFalse(True)
 
     '''
     @pytest.mark.eric

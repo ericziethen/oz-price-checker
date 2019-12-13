@@ -2,6 +2,8 @@
 
 import logging
 
+from decimal import Decimal, ROUND_HALF_UP
+
 from django.db import transaction
 from django.core.management.base import BaseCommand
 
@@ -12,7 +14,7 @@ from ezscrape.scraping.core import ScrapeStatus
 from defusedxml import lxml as defused_lxml
 import lxml
 
-from pricefinderapp.models import Product, ProductPrice
+from pricefinderapp.models import Product, ProductPrice, ScrapeTemplate
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -22,29 +24,62 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle the Command."""
-        self.scrape_products()
-
-    def scrape_products(self):
-        """Scrape the products."""
-        '''
-        for prod in Product.objects.all():
-            full_url = prod.full_url
-
-            !!! if dynamic raise not implemented !!!
-
-            result
-
-            result = scraper.scrape_url(ScrapeConfig(full_url))
-            if result.status == ScrapeStatus.SUCCESS:
-        '''
+        process_products()
 
 
 def process_products():
+    scrape_type_fields = {
+        'Price': 'price'
+    }
+    '''
     for prod in Product.objects.all():
-        result_dic = scrape_url(prod.full_url)
 
+        xpath_dic = {}
+        # get all xpath we support
+        for template in ScrapeTemplate.objects.filter(store=prod.store):
+            if template.scrape_type.name in scrape_type_fields:
+                xpath_dic[template.scrape_type.name] = template.xpath
+
+        # Scrape the data
+        result_dic = scrape_url(prod.full_url, xpath_dic)
+        prod_price = ProductPrice.objects.create(product=prod)
+
+        if 'values' in result_dic:
+            for name, result in result_dic['values'].items():
+                if 'value' in result:
+                    pass
+                else:
+                    pass
+        else:
+            logger.error(F'Scrape Error: {result["error"]}')
+
+
+
+        for result in result_dic:
+            if 'values' in result:
+                update = True
+                if 'value' in result['values'][]
+
+                
+                setattr(prod_price, scrape_type_fields[result], )
+                prod_price
+
+            else:
+                logger.error(F'Scrape Error: {result["error"]}')
+
+        if update:
+            prod_price.save()
 
     # TODO - add to db
+
+    # TODO - add a scrape delay
+    '''
+
+
+def str_to_decimal_price(str_val):
+    val = Decimal(str_val)
+    return val.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+
 
 
 def scrape_url(url, xpath_dic):
