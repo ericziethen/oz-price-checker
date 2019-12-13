@@ -1,9 +1,11 @@
 """App level URL mapping."""
 
-from django.conf.urls import url
-from django.views.generic import TemplateView
+from django.urls import path
+from django.views.generic import RedirectView
+from . import views
 
 
 urlpatterns = [
-    url('', TemplateView.as_view(template_name='index.html'), name='home'),
+    path('', RedirectView.as_view(pattern_name='userproduct_list', permanent=False), name='home'),
+    path('userproduct/', views.UserProductListView.as_view(), name='userproduct_list'),
 ]
