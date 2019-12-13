@@ -1,6 +1,7 @@
 
 # parsing
 beautifulsoup4
+lxml
 
 # Django Related
 django
