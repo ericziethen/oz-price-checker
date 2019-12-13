@@ -2,7 +2,7 @@
 
 import logging
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
 from django.db import transaction
 from django.core.management.base import BaseCommand
@@ -77,8 +77,17 @@ def process_products():
 
 
 def str_to_decimal_price(str_val):
-    val = Decimal(str_val)
-    return val.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    result = None
+
+    try:
+        val = Decimal(str_val)
+    except (InvalidOperation, TypeError):
+        result = None
+    else:
+        if val >= 0.0:
+            result = val.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+
+    return result
 
 
 

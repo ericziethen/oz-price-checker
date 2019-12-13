@@ -92,12 +92,17 @@ def test_valid_decimal(str_val, expected_val):
     assert scrape_products.str_to_decimal_price(str_val) == Decimal(expected_val)
 
 
-#def test_invalid_decimals()
-
-
-
-
-
+INVALID_DECIMAL_PRICES = [
+    (None),
+    (''),
+    ('Word'),
+    ('-15'),
+    ('-2.3'),
+]
+@pytest.mark.eric
+@pytest.mark.parametrize('str_val', INVALID_DECIMAL_PRICES)
+def test_valid_decimal(str_val):
+    assert scrape_products.str_to_decimal_price(str_val) == None
 
 
 
