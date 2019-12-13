@@ -5,7 +5,6 @@ import time
 
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
-from django.db import transaction
 from django.core.management.base import BaseCommand
 
 from ezscrape.scraping import scraper
@@ -14,6 +13,7 @@ from ezscrape.scraping.core import ScrapeStatus
 
 from defusedxml import lxml as defused_lxml
 import lxml
+import lxml.html
 
 from pricefinderapp.models import Product, ProductPrice, ScrapeTemplate
 
@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle the Command."""
-        process_products(2)
+        process_products(5)
 
 
 def process_products(scrape_delay):
@@ -74,7 +74,6 @@ def str_to_decimal_price(str_val):
     return result
 
 
-
 def scrape_url(url, xpath_dic):
     logger.info(F'Scraping Url: "{url}"')
     result_dic = {}
@@ -83,15 +82,17 @@ def scrape_url(url, xpath_dic):
         raise ValueError('No Xpath specified for this scrape')
 
     # Scrape the URL
-    html, error_msg = scrape_product_url(url)
-    if html:
+    html_source, error_msg = scrape_product_url(url)
+    if html_source:
+        html_decoded_string = html_source
+
         result_dic['values'] = {}
 
         # Process the Scrape Result
         for name, xpath in xpath_dic.items():
             result_dic['values'][name] = {}
             try:
-                result = get_xpath_from_html(xpath, html)
+                result = get_xpath_from_html(xpath, html_decoded_string)
             except ValueError as error:
                 result_dic['values'][name]['error'] = str(error)
             else:
@@ -115,13 +116,13 @@ def scrape_product_url(url):
     return (result_html, error_msg)
 
 
-def get_xpath_from_html(xpath, html):
-    root = defused_lxml.fromstring(html)
-
+def get_xpath_from_html(xpath, html_source):
+    #logger.info(F'get_xpath_from_html Xpath: {xpath} HTML:\n">>>>>{html_source}<<<<<"')
     try:
+        root = defused_lxml.fromstring(html_source)        
         result = root.xpath(xpath)
-    except lxml.etree.XPathEvalError as error:
-        raise ValueError(F'Xpath Error for "{xpath}" - {error}')
+    except (lxml.etree.XPathEvalError, lxml.etree.XMLSyntaxError) as error:
+        raise ValueError(F'Xpath Error for "{xpath}" - {type({error})}: {error}')
     else:
         if result:
             return result[0]
