@@ -9,6 +9,7 @@ Click==7.0
 codecov==2.0.15
 colorama==0.4.1
 coverage==4.5.4
+defusedxml==0.6.0
 Django==3.0
 dparse==0.4.1
 ezscrape==0.3
@@ -18,11 +19,13 @@ GitPython==3.0.5
 idna==2.8
 isort==4.3.21
 lazy-object-proxy==1.4.3
+lxml==4.4.2
 mccabe==0.6.1
 more-itertools==8.0.0
 mypy==0.750
 mypy-extensions==0.4.3
 packaging==19.2
+parameterized==0.7.1
 pbr==5.4.4
 pluggy==0.13.1
 py==1.8.0
@@ -43,6 +46,7 @@ selenium==3.141.0
 six==1.13.0
 smmap2==2.0.5
 snowballstemmer==2.0.0
+soupsieve==1.9.5
 sqlparse==0.3.0
 stevedore==1.31.0
 typed-ast==1.4.0

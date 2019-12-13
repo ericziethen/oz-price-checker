@@ -1,5 +1,9 @@
 """ozpricechecker models defination."""
 
+from decimal import Decimal
+from urllib.parse import urljoin
+
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -38,6 +42,14 @@ class Product(models.Model):
 
         unique_together = (('store', 'prod_url'),)
 
+    @property
+    def full_url(self):
+        """Get the full url for this product."""
+        base_url = self.store.prod_base_url
+        if not base_url.endswith('/'):
+            base_url += '/'
+        return urljoin(base_url, self.prod_url)
+
     def __str__(self):
         return self.name
 
@@ -47,10 +59,15 @@ class ProductPrice(models.Model):
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date_time = models.DateTimeField(auto_now=True)
-    price = models.DecimalField(max_digits=12, decimal_places=2)
+    price = models.DecimalField(
+        max_digits=12, blank=True, null=True, decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))])
+    error = models.CharField(max_length=250, blank=True, null=True)
 
-    # def __str__(self):
-    #     return self.price
+    class Meta:
+        """ProductPrice meta data."""
+
+        unique_together = (('product', 'date_time'),)
 
 
 class UserProduct(models.Model):

@@ -12,6 +12,7 @@ pytest-cov
 pytest-django
 codecov
 safety
+parameterized
 
 
 
