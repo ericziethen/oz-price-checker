@@ -9,6 +9,12 @@ from .models import (
 )
 
 
+class ProductPriceAdmin(admin.ModelAdmin):
+    """Admin model for ProductPrice."""
+
+    list_display = ('product', 'date_time', 'price', 'error')
+
+
 class ScrapeTemplateAdmin(admin.ModelAdmin):
     """Admin model for ScrapeTemplate."""
 
@@ -29,7 +35,7 @@ class StoreAdmin(admin.ModelAdmin):
 admin.site.register(Currency)
 admin.site.register(Store, StoreAdmin)
 admin.site.register(Product)
-admin.site.register(ProductPrice)
+admin.site.register(ProductPrice, ProductPriceAdmin)
 admin.site.register(UserProduct)
 admin.site.register(ScrapeType)
 admin.site.register(ScrapeTemplate, ScrapeTemplateAdmin)

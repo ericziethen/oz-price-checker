@@ -1,5 +1,8 @@
 """ozpricechecker models defination."""
 
+from decimal import Decimal
+
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -47,7 +50,9 @@ class ProductPrice(models.Model):
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date_time = models.DateTimeField(auto_now=True)
-    price = models.DecimalField(max_digits=12, decimal_places=2)
+    price = models.DecimalField(
+        max_digits=12, blank=True, null=True, decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))])
     error = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:
