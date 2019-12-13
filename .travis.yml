@@ -44,6 +44,15 @@ install:
 # Capture some information
 - pip list
 
+before_script:
+# Startup Test Server - !!! This might take a bit time, so in script we run linting first to give the startup enough time
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then dev/run_test_server.bat detached; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./dev/run_test_server.sh detached; fi
+
+- sleep 15 # Give the server some time to startup before tests are starting, we could also run the tests after Linting for a natural delay but this is ok for now
+
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then ping -c 4 127.0.0.1; fi
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then ping -n 4 127.0.0.1; fi
 
 script:
 # Run Tests
@@ -57,6 +66,14 @@ script:
 # Run Package Safety Checks
 - if [ "$TRAVIS_OS_NAME" = "windows" ]; then dev/check_package_safety_bare.bat; fi
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./dev/check_package_safety.sh; fi
+
+# Kill the Test Server
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then dev/kill_test_server.bat; fi
+
+# Kill Python processes - Travis doesn't set the title on Windows
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then tasklist //fi "imagename eq python.exe"; fi
+- if [ "$TRAVIS_OS_NAME" = "windows" ]; then taskkill //im python.exe //f; fi
+
 
 after_success:
 - codecov
