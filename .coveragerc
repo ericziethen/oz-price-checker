@@ -4,6 +4,7 @@ omit =
     *__init__*
     */migrations/*
     ozpricechecker\utils\project_logger.py
+    ozpricechecker\manage.py
 
 [report]
 omit =
@@ -11,3 +12,4 @@ omit =
     *__init__*
     */migrations/*
     ozpricechecker\utils\project_logger.py
+    ozpricechecker\manage.py
