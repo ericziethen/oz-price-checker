@@ -25,10 +25,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle the Command."""
-        process_products()
+        process_products(2)
 
 
-def process_products():
+def process_products(scrape_delay):
     for prod in Product.objects.all():
         xpath_dic = {}
 
@@ -50,12 +50,14 @@ def process_products():
                 prod_price.price = str_to_decimal_price(result_dic['values']['Price']['value'])
             else:
                 prod_price.error = result_dic['values']['Price']['error']
-            prod_price.save()
         else:
+            prod_price.error = result_dic["error"]
             logger.error(F'Scrape Error: {result_dic["error"]}')
 
+        prod_price.save()
+
         # delay between scrape attempts
-        time.sleep(2)
+        time.sleep(scrape_delay)
 
 
 def str_to_decimal_price(str_val):
