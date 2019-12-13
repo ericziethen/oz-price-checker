@@ -15,10 +15,15 @@ def test_page_not_found():
     assert result[0] is None
     assert result[1] is not None
 
+def test_get_price_from_html():
+    xpath = '//price/text()'
+    price = scrape_products.get_xpath_from_html(xpath, common.HTML_WITH_PRICE)
+    assert price == '20'
+
+
 
 """
 
-def test_get_price_from_html()
 
 def test_price_not_in_html()
 

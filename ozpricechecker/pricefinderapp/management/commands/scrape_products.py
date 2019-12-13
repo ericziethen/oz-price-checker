@@ -9,6 +9,8 @@ from ezscrape.scraping import scraper
 from ezscrape.scraping.core import ScrapeConfig
 from ezscrape.scraping.core import ScrapeStatus
 
+from defusedxml import lxml
+
 from pricefinderapp.models import Product, ProductPrice
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -47,3 +49,13 @@ def scrape_product(url):
         error_msg = result.error_msg
 
     return (result_html, error_msg)
+
+
+def get_xpath_from_html(xpath, html):
+    root = lxml.fromstring(html)
+
+    result = root.xpath(xpath)
+    if result:
+        return result[0]
+
+    return None
