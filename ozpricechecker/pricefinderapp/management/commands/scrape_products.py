@@ -9,7 +9,8 @@ from ezscrape.scraping import scraper
 from ezscrape.scraping.core import ScrapeConfig
 from ezscrape.scraping.core import ScrapeStatus
 
-from defusedxml import lxml
+from defusedxml import lxml as defused_lxml
+import lxml
 
 from pricefinderapp.models import Product, ProductPrice
 
@@ -38,7 +39,41 @@ class Command(BaseCommand):
         '''
 
 
-def scrape_product(url):
+def process_products():
+    for prod in Product.objects.all():
+        result_dic = scrape_url(prod.full_url)
+
+
+    # TODO - add to db
+
+
+def scrape_url(url, xpath_dic):
+    result_dic = {}
+
+    if not xpath_dic:
+        raise ValueError('No Xpath specified for this scrape')
+
+    # Scrape the URL
+    html, error_msg = scrape_product_url(url)
+    if html:
+        result_dic['values'] = {}
+
+        # Process the Scrape Result
+        for name, xpath in xpath_dic.items():
+            result_dic['values'][name] = {}
+            try:
+                result = get_xpath_from_html(xpath, html)
+            except ValueError as error:
+                result_dic['values'][name]['error'] = str(error)
+            else:
+                result_dic['values'][name]['value'] = result
+    else:
+        result_dic['error'] = error_msg
+
+    return result_dic
+
+
+def scrape_product_url(url):
     result_html = None
     error_msg = None
 
@@ -52,10 +87,14 @@ def scrape_product(url):
 
 
 def get_xpath_from_html(xpath, html):
-    root = lxml.fromstring(html)
+    root = defused_lxml.fromstring(html)
 
-    result = root.xpath(xpath)
-    if result:
-        return result[0]
+    try:
+        result = root.xpath(xpath)
+    except lxml.etree.XPathEvalError as error:
+        raise ValueError(F'Xpath Error for "{xpath}" - {error}')
+    else:
+        if result:
+            return result[0]
 
     return None
