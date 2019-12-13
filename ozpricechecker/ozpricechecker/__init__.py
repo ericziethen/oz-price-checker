@@ -1,0 +1,1 @@
+"""Pricechecker main config package."""

@@ -8,7 +8,7 @@ run_linter () {
     local linter_script=$2
 
     echo "### LINTER START - '$linter_script' ###"
-    $linter_script
+    "$linter_script"
     local return_code=$?
 
     if [[ $return_code -eq  0 ]];
@@ -38,7 +38,7 @@ echo "### Start Linting ###"
 run_linter "Bandit"        "$LINTER_DIR/RunBandit.sh"
 #run_linter "MyPy"          "$LINTER_DIR/RunMyPy.sh"
 run_linter "Pycodestyle"   "$LINTER_DIR/RunPycodestyle.sh"
-#run_linter "Pydocstyle"    "$LINTER_DIR/RunPydocstyle.sh"
+run_linter "Pydocstyle"    "$LINTER_DIR/RunPydocstyle.sh"
 run_linter "Pylint"        "$LINTER_DIR/RunPylint.sh"
 echo "### Linting finished ###"
 
