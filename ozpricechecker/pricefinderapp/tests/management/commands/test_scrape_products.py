@@ -123,7 +123,6 @@ class TestScrapeProducts(TestCase):
         with self.assertRaises(NotImplementedError):
             scrape_products.process_products()
 
-    @pytest.mark.eric
     def test_scrape_products_good(self):
         Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_100, name='Tomatoes 100')
         Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
@@ -135,10 +134,31 @@ class TestScrapeProducts(TestCase):
         price_list = ProductPrice.objects.values_list('price', flat=True)
         self.assertListEqual(sorted(price_list), [Decimal('20.00'), Decimal('100.00')])
 
+    @pytest.mark.eric
+    def test_scrape_product_invalid_xpath(self):
+        template = ScrapeTemplate.objects.filter(store=self.store, scrape_type=self.scrape_type_price).first()
+        self.assertEqual(template.xpath, common.TEST_PAGE_WITH_PRICE_20_XPATH)
+        template.xpath = common.INVALID_XPATH
+        template.save()
+
+        template = ScrapeTemplate.objects.filter(store=self.store, scrape_type=self.scrape_type_price).first()
+        self.assertEqual(template.xpath, common.INVALID_XPATH)
+
+        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
+
+        self.assertEqual(ProductPrice.objects.all().count(), 0)
+        scrape_products.process_products()
+        product_prices = ProductPrice.objects.all()
+        self.assertEqual(product_prices.count(), 1)
+
+        entry = product_prices.first()
+        self.assertIsNone(entry.price)
+        self.assertIsNotNone(entry.error)
+
+
+
 
     '''
-    def test_scrape_product_invalid_xpath(self):
-        self.assertFalse(True)
 
     def test_scrape_product_url_not_found(self):
         self.assertFalse(True)
