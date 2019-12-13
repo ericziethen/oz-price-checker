@@ -44,7 +44,10 @@ class Product(models.Model):
 
     @property
     def full_url(self):
-        return urljoin(self.store.prod_base_url, self.prod_url)
+        base_url = self.store.prod_base_url
+        if not base_url.endswith('/'):
+            base_url += '/'
+        return urljoin(base_url, self.prod_url)
 
     def __str__(self):
         return self.name

@@ -19,6 +19,7 @@ class SetupTests(TestCase):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes', name='Super Tomatoes')
         self.assertEqual(str(product), 'Super Tomatoes')
 
+import pytest
 
 class TestProductAttributes(TestCase):
 
@@ -27,12 +28,14 @@ class TestProductAttributes(TestCase):
 
     @parameterized.expand([
         ('', '/1234/Tomatoes', '/1234/Tomatoes'),
-        ('', '1234/Tomatoes', '1234/Tomatoes'),
+        ('', '1234/Tomatoes', '/1234/Tomatoes'),
         ('http://www.woolies.com.au', '/1234/Tomatoes', 'http://www.woolies.com.au/1234/Tomatoes'),
         ('http://www.woolies.com.au', '1234/Tomatoes', 'http://www.woolies.com.au/1234/Tomatoes'),
         ('http://www.woolies.com.au/', '/1234/Tomatoes', 'http://www.woolies.com.au/1234/Tomatoes'),
         ('http://www.woolies.com.au/', '1234/Tomatoes', 'http://www.woolies.com.au/1234/Tomatoes'),
+        ('https://www.woolworths.com.au/shop/productdetails', 'prud_url_1', 'https://www.woolworths.com.au/shop/productdetails/prud_url_1')
     ])
+    @pytest.mark.eric
     def test_url_combines(self, store_url, prod_url, combined_url):
         store = Store.objects.create(name='Woolworths', currency=self.currency,
                                           prod_base_url=store_url)

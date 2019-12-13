@@ -76,6 +76,7 @@ def str_to_decimal_price(str_val):
 
 
 def scrape_url(url, xpath_dic):
+    logger.info(F'Scraping Url: "{url}"')
     result_dic = {}
 
     if not xpath_dic:
