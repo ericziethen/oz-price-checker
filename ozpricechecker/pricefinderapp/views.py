@@ -1,10 +1,11 @@
 """App level view."""
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import ListView
 from pricefinderapp.models import UserProduct
 
 
-class UserProductListView(ListView):  # pylint: disable=too-many-ancestors
+class UserProductListView(LoginRequiredMixin, ListView):  # pylint: disable=too-many-ancestors
     """User product list view."""
 
     model = UserProduct
