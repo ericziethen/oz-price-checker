@@ -1,8 +1,6 @@
 """Tet views."""
 
 from django.contrib.auth.models import User
-from django.urls import  reverse_lazy #, resolve, reverse
-from django.urls import reverse
 from django.test import TestCase
 # from pricefinderapp.views import UserProductListView
 
