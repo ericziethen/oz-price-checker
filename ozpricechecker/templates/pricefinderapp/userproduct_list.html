@@ -3,13 +3,37 @@
 {% block content %}
     <h1  align="center">{{ user.get_username }} Product List</h1>
 
-    {% for user_product in userproduct_list %}
+    <!-- {% for user_product in userproduct_list %}
     <ul>
         <li><strong>User Product:</strong> {{ user_product.product }}</li>
         <li><strong>Product price threshhold:</strong> {{ user_product.threshhold }}</li>
     </ul>
     {% empty %}
         <li>No user product yet.</li>
-    {% endfor %} 
+    {% endfor %}  -->
+
+    <table class="table">
+        <tr>
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">User Product</th>
+                    <th scope="col">Threshhold Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_product in userproduct_list %}
+                <tr>
+                    <td>{{user_product.product}}</td>
+                    <td>{{user_product.threshhold}}</td>
+                    <td>
+                        <a  href="{% url "userproduct_update"  user_product.id  %}">edit</a>
+                        <a  href="{% url "userproduct_delete"  user_product.id  %}">delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                    <li>No user product yet.</li>
+                {% endfor %}
+            </tbody>
+    </table>
 
 {% endblock %}
