@@ -3,14 +3,14 @@
 from django.contrib.auth.models import User
 # from django.urls import reverse
 from django.test import TestCase
-from pricefinderapp.models import Currency, Store, Product, ProductPrice, UserProduct
+from pricefinderapp.models import Currency, Store, Product, ProductPrice  # , UserProduct
 
 
 class ProjectTests(TestCase):
     def test_homepage(self):
         response = self.client.get('')
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith('/accounts/login/'))
+        self.assertTrue(response.url.startswith('/userproduct/'))
 
 
 class UserProductListViewTest(TestCase):
@@ -83,15 +83,15 @@ class UserProductCreateViewTest(TestCase):
         #     'user': self.user,
         #     'threshhold': 5.00
         # })
-        print(response)
+        # print(response)
         # print(response.url)
-        # self.assertTemplateUsed(response, 'pricefinderapp/userproduct_add.html')
-        print(UserProduct.objects.all())
-        print(ProductPrice.objects.all())
-        print(Product.objects.all())
-        print(Store.objects.all())
+        self.assertTemplateUsed(response, 'pricefinderapp/userproduct_add.html')
+        # print(UserProduct.objects.all())
+        # print(ProductPrice.objects.all())
+        # print(Product.objects.all())
+        # print(Store.objects.all())
 
-        self.assertEqual(UserProduct.objects.last().threshhold, 5.00)
+        # self.assertEqual(UserProduct.objects.last().threshhold, 5.00)
 
     # def test_post_method_user_login_userproduct_view(self):
     #     response = self.client.post('/accounts/login/', {'username': 'testuser', 'password': '12345'})

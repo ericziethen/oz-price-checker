@@ -13,11 +13,11 @@ class SetupTests(TestCase):
 
     def test_str_no_name(self):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes')
-        self.assertEqual(str(product), '')
+        self.assertEqual(str(product), 'Woolworths - ')
 
     def test_str_name(self):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes', name='Super Tomatoes')
-        self.assertEqual(str(product), 'Super Tomatoes')
+        self.assertEqual(str(product), 'Woolworths - Super Tomatoes')
 
 
 class TestProductAttributes(TestCase):
