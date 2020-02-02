@@ -1,0 +1,18 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Add a product to user's list</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" class="btn btn-success">Add</button>
+        </form>
+    </div>
+</div>
+<a  href="{% url "product_add" %}">Add Prod</a>
+{% endblock %}

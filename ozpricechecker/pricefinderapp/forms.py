@@ -2,9 +2,7 @@
 
 from django.core.validators import URLValidator
 from django.forms import ModelForm, ValidationError
-
 from ezscrape.scraping.scraper import check_url
-
 from .models import Store
 
 
