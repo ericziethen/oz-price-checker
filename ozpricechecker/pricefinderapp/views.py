@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.http import HttpResponse
-from pricefinderapp.models import UserProduct
+from pricefinderapp.models import UserProduct, Product
 
 
 class UserProductListView(LoginRequiredMixin, ListView):  # pylint: disable=too-many-ancestors
@@ -55,3 +55,19 @@ class UserProducttDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'pricefinderapp/userproduct_delete.html'
     context_object_name = 'UserProduct'
     success_url = reverse_lazy('userproduct_list')
+
+
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    """User product create view."""
+
+    model = Product
+    template_name = 'pricefinderapp/product_add.html'
+    fields = ('store', 'prod_url', 'name')
+    success_url = reverse_lazy('userproduct_add')
+
+    def form_valid(self, form):
+        """Validate form data."""
+        try:
+            return super().form_valid(form)
+        except IntegrityError:
+            return HttpResponse("ERROR: User Product already exists!")

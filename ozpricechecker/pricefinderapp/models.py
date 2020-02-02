@@ -51,7 +51,7 @@ class Product(models.Model):
         return urljoin(base_url, self.prod_url)
 
     def __str__(self):
-        return self.name
+        return '%s - %s' % (self.store, self.name)
 
 
 class ProductPrice(models.Model):
