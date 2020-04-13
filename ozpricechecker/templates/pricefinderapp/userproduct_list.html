@@ -25,16 +25,19 @@
                 {% for user_product in userproduct_list %}
                 <tr>
                     <td>{{user_product.product}}</td>
-                    <td>{{user_product.threshhold}}</td>
+                    <td class="font-weight-bold">{{user_product.threshhold}}</td>
                     <td>
-                        <a  href="{% url "userproduct_update"  user_product.id  %}">edit</a>
-                        <a  href="{% url "userproduct_delete"  user_product.id  %}">delete</a>
+                        <a class="text-primary" href="{% url "userproduct_update"  user_product.id  %}">edit</a>
+                         \ 
+                        <a class="text-danger" href="{% url "userproduct_delete"  user_product.id  %}">delete</a>
                     </td>
                 </tr>
                 {% empty %}
                     <li>No user product yet.</li>
                 {% endfor %}
             </tbody>
+        <tr></tr>
+        </tr>
     </table>
-    <a  href="{% url "userproduct_add" %}">Add</a>
+    <center><a class="p-3 mb-2 bg-primary text-white" href="{% url "userproduct_add" %}">Add</a></center>
 {% endblock %}
