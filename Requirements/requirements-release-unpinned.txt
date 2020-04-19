@@ -1,6 +1,5 @@
 
 # parsing
-defusedxml
 lxml
 
 # Django Related

@@ -11,9 +11,9 @@ from ezscrape.scraping import scraper
 from ezscrape.scraping.core import ScrapeConfig
 from ezscrape.scraping.core import ScrapeStatus
 
-from defusedxml import lxml as defused_lxml
 import lxml  # nosec
 import lxml.html  # nosec
+import lxml.etree  # nosec
 
 from pricefinderapp.models import Product, ProductPrice, ScrapeTemplate
 
@@ -124,7 +124,9 @@ def get_xpath_from_html(xpath, html_source):
     """Get the xpath value from the given html."""
     # logger.info(F'get_xpath_from_html Xpath: {xpath} HTML:\n">>>>>{html_source}<<<<<"')
     try:
-        root = defused_lxml.fromstring(html_source)
+        # pylint: disable=c-extension-no-member
+        root = lxml.etree.fromstring(html_source)  # nosec
+        # pylint: enable=c-extension-no-member
         result = root.xpath(xpath)
     except (lxml.etree.XPathEvalError, lxml.etree.XMLSyntaxError) as error:  # pylint: disable=c-extension-no-member
         raise ValueError(F'Xpath Error for "{xpath}" - {type({error})}: {error}')
