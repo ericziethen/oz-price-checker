@@ -9,7 +9,7 @@ from collections import OrderedDict
 from django.db import transaction
 from django.core.management.base import BaseCommand, CommandError
 from pricefinderapp.models import (
-    Currency, ScrapeType, Store
+    Currency, ScrapeType, ScrapeTemplate, Store
 )
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -32,6 +32,7 @@ class Command(BaseCommand):
         import_files[os.path.join(base_path, 'currencies.csv')] = self.populate_currencies
         import_files[os.path.join(base_path, 'stores.csv')] = self.populate_stores
         import_files[os.path.join(base_path, 'scrape_types.csv')] = self.populate_scrape_types
+        import_files[os.path.join(base_path, 'scrape_templates.csv')] = self.populate_scrape_templates
 
         try:
             self.validate_base_path(base_path, import_files.keys())
@@ -72,6 +73,18 @@ class Command(BaseCommand):
         with transaction.atomic():
             for row in csv_data:
                 ScrapeType.objects.update_or_create(name=row['Name'])
+
+    @staticmethod
+    def populate_scrape_templates(csv_data):
+        """Populate Scrape Template db."""
+        logger.info(F'Populate Scrape Templates')
+        with transaction.atomic():
+            for row in csv_data:
+                ScrapeTemplate.objects.update_or_create(
+                    store=Store.objects.get(name=row['Store']),
+                    scrape_type=ScrapeType.objects.get(name=row['Scrape Type']),
+                    xpath=row['Xpath'],
+                )
 
     @staticmethod
     def validate_base_path(base_path, expected_file_list):
