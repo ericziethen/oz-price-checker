@@ -9,7 +9,7 @@ pushd "%PROJ_MAIN_DIR%\%PACKAGE_ROOT%"
 
 set IMPORT_DATE=2019.12.04
 
-set DB_CSV_DIR=BaseData
+set DB_CSV_DIR=BaseData\Master Data
 
 echo %date% - %time%
 
