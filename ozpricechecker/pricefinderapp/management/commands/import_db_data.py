@@ -64,7 +64,7 @@ class Command(BaseCommand):
         """Validate the base path."""
         # Check path exists as directory
         if not os.path.exists(base_path) or not os.path.isdir(base_path):
-            raise ValueError(F'{base_path} is not a valid Directory Path')
+            raise ValueError(F'"{base_path}" is not a valid Directory Path')
 
         # Check all expected files are present
         for file_path in expected_file_list:
