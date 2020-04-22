@@ -11,7 +11,6 @@ from pricefinderapp.models import (
 
 class CommandsTestCase(TestCase):
 
-    @classmethod
     def setUp(self):
         args = [Path('ozpricechecker') / 'tests' / 'TestFiles' /'DbData']
         opts = {}
