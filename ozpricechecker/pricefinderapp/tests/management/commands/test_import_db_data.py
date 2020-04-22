@@ -10,7 +10,7 @@ from pricefinderapp.models import (
 class CommandsTestCase(TestCase):
 
     @classmethod
-    def setUp(cls):
+    def setUp(self):
         args = [R'ozpricechecker\tests\TestFiles\DbData']
         opts = {}
         call_command('import_db_data', *args, **opts)
