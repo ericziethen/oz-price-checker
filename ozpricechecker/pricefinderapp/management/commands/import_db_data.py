@@ -8,7 +8,9 @@ from collections import OrderedDict
 
 from django.db import transaction
 from django.core.management.base import BaseCommand, CommandError
-from pricefinderapp.models import Currency
+from pricefinderapp.models import (
+    Currency, ScrapeType
+)
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -27,6 +29,7 @@ class Command(BaseCommand):
         # Supported files to import
         import_files = OrderedDict()
 
+        import_files[os.path.join(base_path, 'scrape_types.csv')] = self.populate_scrape_types
         import_files[os.path.join(base_path, 'currencies.csv')] = self.populate_currencies
 
         try:
@@ -41,8 +44,16 @@ class Command(BaseCommand):
                 import_func(reader)
 
     @staticmethod
+    def populate_scrape_types(csv_data):
+        """Populate Scrape Type db."""
+        logger.info(F'Populate Currencies')
+        with transaction.atomic():
+            for row in csv_data:
+                ScrapeType.objects.update_or_create(name=row['Name'])
+
+    @staticmethod
     def populate_currencies(csv_data):
-        """Populate currency db."""
+        """Populate Currency db."""
         logger.info(F'Populate Currencies')
         with transaction.atomic():
             for row in csv_data:
