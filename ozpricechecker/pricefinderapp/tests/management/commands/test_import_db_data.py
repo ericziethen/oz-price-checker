@@ -1,4 +1,6 @@
 
+from pathlib import Path
+
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -11,7 +13,7 @@ class CommandsTestCase(TestCase):
 
     @classmethod
     def setUp(self):
-        args = [R'ozpricechecker\tests\TestFiles\DbData']
+        args = [Path('ozpricechecker') / 'tests' / 'TestFiles' /'DbData']
         opts = {}
         call_command('import_db_data', *args, **opts)
 
