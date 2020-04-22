@@ -2,14 +2,14 @@
 
 setlocal
 
-set PROJ_MAIN_DIR=%~dp0..
+set PROJ_MAIN_DIR=%~dp0..\..
 set PACKAGE_ROOT=ozpricechecker
 
 pushd "%PROJ_MAIN_DIR%\%PACKAGE_ROOT%"
 
 set IMPORT_DATE=2019.12.04
 
-set DB_CSV_DIR=%PROJ_MAIN_DIR%\BaseData
+set DB_CSV_DIR=BaseData
 
 echo %date% - %time%
 
