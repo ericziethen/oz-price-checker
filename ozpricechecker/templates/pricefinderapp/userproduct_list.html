@@ -1,32 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1  align="center">{{ user.get_username }}'s Product List</h1>
-
-    <!-- {% for user_product in userproduct_list %}
-    <ul>
-        <li><strong>User Product:</strong> {{ user_product.product }}</li>
-        <li><strong>Product price threshhold:</strong> {{ user_product.threshhold }}</li>
-    </ul>
-    {% empty %}
-        <li>No user product yet.</li>
-    {% endfor %}  -->
+    <h1 class="text-capitalize" align="center">{{ user.get_username }}'s Product List</h1>
 
     <table class="table">
         <tr>
             <thead class="thead-light">
                 <tr>
-                    <th scope="col">User Product</th>
-                    <th scope="col">Threshhold Price</th>
-                    <th scope="col">Action</th>
+                    <th scope="col">
+                        User Product
+                        <a class="badge badge-primary" href="{% url "userproduct_add" %}">+</a>
+                    </th>
+                    <th class="text-right" scope="col">Threshhold Price</th>
+                    <th class="text-right" scope="col">Price</th>
+                    <th scope="col">Curency</th>
+                    <th class="text-center" scope="col">DateTime</th>
+                    <th class="text-center" scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user_product in userproduct_list %}
                 <tr>
                     <td>{{user_product.product}}</td>
-                    <td class="font-weight-bold">{{user_product.threshhold}}</td>
-                    <td>
+                    <td align="right" class="font-weight-bold">{{user_product.threshhold}}</td>
+                    <td align="right">{{user_product.product.latest_price}}</td>
+                    <td>{{user_product.product.store.currency}}</td>
+                    <td align="center">{{user_product.product.date_for_latest_price}}</td>
+                    <td align="center">
                         <a class="text-primary" href="{% url "userproduct_update"  user_product.id  %}">edit</a>
                          \ 
                         <a class="text-danger" href="{% url "userproduct_delete"  user_product.id  %}">delete</a>
@@ -39,5 +39,5 @@
         <tr></tr>
         </tr>
     </table>
-    <center><a class="p-3 mb-2 bg-primary text-white" href="{% url "userproduct_add" %}">Add</a></center>
+
 {% endblock %}
