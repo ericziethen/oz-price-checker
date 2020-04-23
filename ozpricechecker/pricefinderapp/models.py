@@ -50,6 +50,16 @@ class Product(models.Model):
             base_url += '/'
         return urljoin(base_url, self.prod_url)
 
+    @property
+    def latest_price(self):
+        """Get the full url for this product."""
+        return ProductPrice.objects.filter(product=self).order_by('-date_time')[0].price
+
+    @property
+    def date_for_latest_price(self):
+        """Get the full url for this product."""
+        return ProductPrice.objects.filter(product=self).order_by('-date_time')[0].date_time
+
     def __str__(self):
         return '%s - %s' % (self.store, self.name)
 
@@ -80,7 +90,6 @@ class UserProduct(models.Model):
     class Meta:
         """User Product meta data."""
 
-        ordering = ['-id']
         unique_together = (('product', 'user'),)
 
 
