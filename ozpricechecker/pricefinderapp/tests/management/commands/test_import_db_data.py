@@ -12,7 +12,7 @@ from pricefinderapp.models import (
 class CommandsTestCase(TestCase):
 
     def setUp(self):
-        args = [Path('ozpricechecker') / 'tests' / 'TestFiles' / 'DbData']
+        args = [Path('ozpricechecker') / 'pricefinderapp' / 'tests' / 'TestFiles' / 'DbData']
         opts = {}
         call_command('import_db_data', *args, **opts)
 
