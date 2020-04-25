@@ -1,10 +1,10 @@
+import time
+
 from django.test import TestCase
 
 from parameterized import parameterized
 
 from pricefinderapp.models import Currency, Product, Store, ProductPrice
-
-import time
 
 
 class SetupTests(TestCase):
@@ -25,6 +25,7 @@ class SetupTests(TestCase):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes', name='Super Tomatoes')
 
         product_price_1 = ProductPrice.objects.create(product=product, price=10)
+        self.assertEqual(product.date_for_latest_price, product_price_1.date_time)
         time.sleep(1)
         product_price_2 = ProductPrice.objects.create(product=product, price=50)
         time.sleep(1)
