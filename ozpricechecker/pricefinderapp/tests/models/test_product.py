@@ -20,20 +20,21 @@ class SetupTests(TestCase):
     def test_str_name(self):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes', name='Super Tomatoes')
         self.assertEqual(str(product), 'Woolworths - Super Tomatoes')
-    
+
     def test_latest_prod_price_date(self):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes', name='Super Tomatoes')
-        productPrice1 = ProductPrice.objects.create(product=product, price=10)
-        time.sleep(1)
-        productPrice2 = ProductPrice.objects.create(product=product, price=50)
-        time.sleep(1)
-        productPrice3 = ProductPrice.objects.create(product=product, price=25)
-        self.assertEqual(product.latest_price, productPrice3.price)
-        self.assertEqual(product.date_for_latest_price, productPrice3.date_time)
 
-        productPrice3.delete()
-        self.assertEqual(product.latest_price, productPrice2.price)
-        self.assertEqual(product.date_for_latest_price, productPrice2.date_time)
+        product_price_1 = ProductPrice.objects.create(product=product, price=10)
+        time.sleep(1)
+        product_price_2 = ProductPrice.objects.create(product=product, price=50)
+        time.sleep(1)
+        product_price_3 = ProductPrice.objects.create(product=product, price=25)
+        self.assertEqual(product.latest_price, product_price_3.price)
+        self.assertEqual(product.date_for_latest_price, product_price_3.date_time)
+
+        product_price_3.delete()
+        self.assertEqual(product.latest_price, product_price_2.price)
+        self.assertEqual(product.date_for_latest_price, product_price_2.date_time)
 
 
 class TestProductAttributes(TestCase):
