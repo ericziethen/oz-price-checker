@@ -90,6 +90,7 @@ class UserProduct(models.Model):
     class Meta:
         """User Product meta data."""
 
+        ordering = ['-id']
         unique_together = (('product', 'user'),)
 
 
