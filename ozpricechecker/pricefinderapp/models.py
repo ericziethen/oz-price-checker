@@ -99,6 +99,14 @@ class UserProduct(models.Model):
         ordering = ['-id']
         unique_together = (('product', 'user'),)
 
+    @property
+    def is_threshhold_reached(self):
+        """Get the full url for this product."""
+        product_price = ProductPrice.objects.filter(product=self.product).order_by('-date_time').first()
+        if product_price and product_price.price <= self.threshhold:
+            return True
+        return False
+
 
 class ScrapeType(models.Model):
     """Scrape type master."""
