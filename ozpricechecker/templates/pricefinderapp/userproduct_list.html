@@ -20,18 +20,33 @@
             </thead>
             <tbody>
                 {% for user_product in userproduct_list %}
-                <tr>
-                    <td>{{user_product.product}}</td>
-                    <td align="right" class="font-weight-bold">{{user_product.threshhold}}</td>
-                    <td align="right">{{user_product.product.latest_price}}</td>
-                    <td>{{user_product.product.store.currency}}</td>
-                    <td align="center">{{user_product.product.date_for_latest_price}}</td>
-                    <td align="center">
-                        <a class="text-primary" href="{% url "userproduct_update"  user_product.id  %}">edit</a>
-                         \ 
-                        <a class="text-danger" href="{% url "userproduct_delete"  user_product.id  %}">delete</a>
-                    </td>
-                </tr>
+                    {% if user_product.product.latest_price <= user_product.threshhold %}
+                    <tr class="table-danger">
+                        <td>{{user_product.product}}</td>
+                        <td align="right" class="font-weight-bold">{{user_product.threshhold}}</td>
+                        <td align="right">{{user_product.product.latest_price}}</td>
+                        <td>{{user_product.product.store.currency}}</td>
+                        <td align="center">{{user_product.product.date_for_latest_price}}</td>
+                        <td align="center">
+                            <a class="text-primary" href="{% url "userproduct_update"  user_product.id  %}">edit</a>
+                            \ 
+                            <a class="text-danger" href="{% url "userproduct_delete"  user_product.id  %}">delete</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    </tr>
+                        <td>{{user_product.product}}</td>
+                        <td align="right" class="font-weight-bold">{{user_product.threshhold}}</td>
+                        <td align="right">{{user_product.product.latest_price}}</td>
+                        <td>{{user_product.product.store.currency}}</td>
+                        <td align="center">{{user_product.product.date_for_latest_price}}</td>
+                        <td align="center">
+                            <a class="text-primary" href="{% url "userproduct_update"  user_product.id  %}">edit</a>
+                            \ 
+                            <a class="text-danger" href="{% url "userproduct_delete"  user_product.id  %}">delete</a>
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% empty %}
                     <li>No user product yet.</li>
                 {% endfor %}
