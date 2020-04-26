@@ -23,7 +23,8 @@ class SetupTests(TestCase):
 
     def test_latest_prod_price_date(self):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes', name='Super Tomatoes')
-
+        self.assertEqual(product.latest_price, None)
+        self.assertEqual(product.date_for_latest_price, None)
         product_price_1 = ProductPrice.objects.create(product=product, price=10)
         self.assertEqual(product.date_for_latest_price, product_price_1.date_time)
         time.sleep(1)

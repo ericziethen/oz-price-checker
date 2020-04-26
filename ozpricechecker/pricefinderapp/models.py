@@ -53,12 +53,18 @@ class Product(models.Model):
     @property
     def latest_price(self):
         """Get the full url for this product."""
-        return ProductPrice.objects.filter(product=self).order_by('-date_time')[0].price
+        product_price = ProductPrice.objects.filter(product=self).order_by('-date_time').first()
+        if product_price:
+            return product_price.price
+        return None
 
     @property
     def date_for_latest_price(self):
         """Get the full url for this product."""
-        return ProductPrice.objects.filter(product=self).order_by('-date_time')[0].date_time
+        product_price = ProductPrice.objects.filter(product=self).order_by('-date_time').first()
+        if product_price:
+            return product_price.date_time
+        return None
 
     def __str__(self):
         return '%s - %s' % (self.store, self.name)
