@@ -11,35 +11,6 @@ from pricefinderapp.management.commands import scrape_products
 from tests import common
 
 
-def test_page_found():
-    result = scrape_products.scrape_product_url(common.TEST_PAGE_WITH_PRICE_20)
-    assert result[0] is not None
-    assert result[1] is None
-
-
-def test_page_not_found():
-    result = scrape_products.scrape_product_url(common.TEST_PAGE_NOT_FOUND)
-    assert result[0] is None
-    assert result[1] is not None
-
-
-def test_get_price_from_html():
-    xpath = common.TEST_PAGE_WITH_PRICE_20_XPATH
-    price = scrape_products.get_xpath_from_html(xpath, common.HTML_WITH_PRICE)
-    assert price == '20'
-
-
-def test_price_not_in_html():
-    xpath = '//price-not-found/text()'
-    price = scrape_products.get_xpath_from_html(xpath, common.HTML_WITH_PRICE)
-    assert price is None
-
-
-def test_invalid_xpath():
-    with pytest.raises(ValueError):
-        scrape_products.get_xpath_from_html(common.INVALID_XPATH, common.HTML_WITH_PRICE)
-
-
 def test_no_xpath_values_specified():
     with pytest.raises(ValueError):
         scrape_products.process_url(common.TEST_PAGE_NOT_FOUND, {})
@@ -153,6 +124,7 @@ class TestScrapeProducts(TestCase):
         entry = product_prices.first()
         self.assertIsNone(entry.price)
         self.assertIsNotNone(entry.error)
+
 
     def test_scrape_product_url_not_found(self):
         Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_NOT_FOUND, name='Tomatoes 20')

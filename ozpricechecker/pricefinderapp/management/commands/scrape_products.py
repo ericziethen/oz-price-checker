@@ -7,15 +7,10 @@ from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
 from django.core.management.base import BaseCommand
 
-from ezscrape.scraping import scraper
-from ezscrape.scraping.core import ScrapeConfig
-from ezscrape.scraping.core import ScrapeStatus
-
-import lxml  # nosec
-import lxml.html  # nosec
-import lxml.etree  # nosec
-
 from pricefinderapp.models import Product, ProductPrice, ScrapeTemplate
+
+from utils.htmlparse import xpathparser
+from utils.scrape import scraper
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -84,8 +79,9 @@ def process_url(url, xpath_dic):
     if not xpath_dic:
         raise ValueError('No Xpath specified for this scrape')
 
+    # TODO - Find In Utilities Scraper
     # Scrape the URL
-    html_source, error_msg = scrape_product_url(url)
+    html_source, error_msg = scraper.scrape_url(url)
     if html_source:
         html_decoded_string = html_source
 
@@ -95,7 +91,8 @@ def process_url(url, xpath_dic):
         for name, xpath in xpath_dic.items():
             result_dic['values'][name] = {}
             try:
-                result = get_xpath_from_html(xpath, html_decoded_string)
+                # TODO - Get from Utility HTML Parser
+                result = xpathparser.get_xpath_from_html(xpath, html_decoded_string)
             except ValueError as error:
                 result_dic['values'][name]['error'] = str(error)
             else:
@@ -104,34 +101,3 @@ def process_url(url, xpath_dic):
         result_dic['error'] = error_msg
 
     return result_dic
-
-
-def scrape_product_url(url):
-    """Scrape the online Product url."""
-    result_html = None
-    error_msg = None
-
-    result = scraper.scrape_url(ScrapeConfig(url))
-    if result.status == ScrapeStatus.SUCCESS:
-        result_html = result.first_page.html
-    else:
-        error_msg = result.error_msg
-
-    return (result_html, error_msg)
-
-
-def get_xpath_from_html(xpath, html_source):
-    """Get the xpath value from the given html."""
-    # logger.info(F'get_xpath_from_html Xpath: {xpath} HTML:\n">>>>>{html_source}<<<<<"')
-    try:
-        # pylint: disable=c-extension-no-member
-        root = lxml.etree.fromstring(html_source)  # nosec
-        # pylint: enable=c-extension-no-member
-        result = root.xpath(xpath)
-    except (lxml.etree.XPathEvalError, lxml.etree.XMLSyntaxError) as error:  # pylint: disable=c-extension-no-member
-        raise ValueError(F'Xpath Error for "{xpath}" - {type({error})}: {error}')
-    else:
-        if result:
-            return result[0]
-
-    return None
