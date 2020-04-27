@@ -52,7 +52,7 @@ class Product(models.Model):
 
     @property
     def latest_price(self):
-        """Get the full url for this product."""
+        """Get latest price for this product."""
         product_price = ProductPrice.objects.filter(product=self).order_by('-date_time').first()
         if product_price:
             return product_price.price
@@ -60,7 +60,7 @@ class Product(models.Model):
 
     @property
     def date_for_latest_price(self):
-        """Get the full url for this product."""
+        """Get the latest price date for this product."""
         product_price = ProductPrice.objects.filter(product=self).order_by('-date_time').first()
         if product_price:
             return product_price.date_time
@@ -101,7 +101,7 @@ class UserProduct(models.Model):
 
     @property
     def is_threshhold_reached(self):
-        """Get the full url for this product."""
+        """Get if threshold reached for this product."""
         product_price = ProductPrice.objects.filter(product=self.product).order_by('-date_time').first()
         if product_price and product_price.price <= self.threshhold:
             return True
