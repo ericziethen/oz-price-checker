@@ -1,3 +1,4 @@
+"""Scrape Functionality."""
 
 from ezscrape.scraping import scraper
 from ezscrape.scraping.core import ScrapeConfig
@@ -5,7 +6,7 @@ from ezscrape.scraping.core import ScrapeStatus
 
 
 def scrape_url(url):
-    """Scrape the online Product url."""
+    """Scrape a url."""
     result_html = None
     error_msg = None
 

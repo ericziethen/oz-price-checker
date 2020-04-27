@@ -1,3 +1,4 @@
+"""Test Scraper Functionality."""
 
 from tests import common
 from utils.scrape import scraper
