@@ -50,6 +50,22 @@ class Product(models.Model):
             base_url += '/'
         return urljoin(base_url, self.prod_url)
 
+    @property
+    def latest_price(self):
+        """Get latest price for this product."""
+        product_price = ProductPrice.objects.filter(product=self).order_by('-date_time').first()
+        if product_price:
+            return product_price.price
+        return None
+
+    @property
+    def date_for_latest_price(self):
+        """Get the latest price date for this product."""
+        product_price = ProductPrice.objects.filter(product=self).order_by('-date_time').first()
+        if product_price:
+            return product_price.date_time
+        return None
+
     def __str__(self):
         return '%s - %s' % (self.store, self.name)
 
@@ -82,6 +98,14 @@ class UserProduct(models.Model):
 
         ordering = ['-id']
         unique_together = (('product', 'user'),)
+
+    @property
+    def is_threshhold_reached(self):
+        """Get if threshold reached for this product."""
+        product_price = ProductPrice.objects.filter(product=self.product).order_by('-date_time').first()
+        if product_price and product_price.price <= self.threshhold:
+            return True
+        return False
 
 
 class ScrapeType(models.Model):
