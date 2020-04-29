@@ -26,34 +26,66 @@ class Command(BaseCommand):
 def process_products(scrape_delay):
     """Process the products with the given delay."""
     for prod in Product.objects.all():
-        xpath_dic = {}
 
         store = prod.store
 
+        # TODO - ENABLE and setup selenium support as per arguments
+        #store.dynamic_page = True
         if store.dynamic_page:
             raise NotImplementedError('Need to enable Selenium Scraping to support Dynamic Pages')
 
-        # get all price xpath for now
-        for template in ScrapeTemplate.objects.filter(store=prod.store, scrape_type__name='Price'):
-            xpath_dic['Price'] = template.xpath
+        # Scrape the Product Page
+        prod_url = prod.full_url
+        html_source, error_msg = scraper.scrape_url(prod_url)
 
-        # Scrape the data
-        result_dic = process_url(prod.full_url, xpath_dic)
-        prod_price = ProductPrice.objects.create(product=prod)
+        if html_source:
+            # Scrape Price Data
+            parse_produc_price(prod, html_source)
 
-        if 'values' in result_dic:
-            if 'value' in result_dic['values']['Price']:
-                prod_price.price = str_to_decimal_price(result_dic['values']['Price']['value'])
-            else:
-                prod_price.error = result_dic['values']['Price']['error']
+            # delay between scrape attempts
+            time.sleep(scrape_delay)
+
         else:
-            prod_price.error = result_dic["error"]
-            logger.error(F'Scrape Error: {result_dic["error"]}')
+            logger.error(F'Failed to Scrape Product "{prod} - Url: {prod_url}, Error: {error_msg}')
 
-        prod_price.save()
 
-        # delay between scrape attempts
-        time.sleep(scrape_delay)
+def parse_produc_price(db_prod, html_source):
+    """Parse the Product Prices."""
+    price_str = None
+
+    # Parse the Full Price
+    price_str = parse_template(db_prod, 'Price', html_source)
+
+    # Parse the Partial Price
+    if not price_str:
+        whole_str = parse_template(db_prod, 'PriceWholeNumber', html_source)
+        fraction_str = parse_template(db_prod, 'PriceFraction', html_source)
+
+        price_str = F'{whole_str}.{fraction_str}'
+
+    if price_str:
+        price = str_to_decimal_price(price_str)
+
+        if price:
+            ProductPrice.objects.create(product=db_prod, price=price)
+        else:
+            logger.error(F'Failed to convert "{price_str}" to Decimal')
+    else:
+        logger.error(F'No Price found for Product: "{db_prod}"')
+
+
+def parse_template(prod, scrape_type, html):
+    """Parse the template."""
+    result = ''
+    template = ScrapeTemplate.objects.filter(store=prod.store, scrape_type__name=scrape_type).first()
+
+    if template:
+        try:
+            result = xpathparser.get_xpath_from_html(template.xpath, html)
+        except ValueError as error:
+            logger.error(F'Failed to parse xpath: "{template.xpath}" for Product: {prod} - Error: {error}')
+
+    return result
 
 
 def str_to_decimal_price(str_val):
@@ -69,35 +101,3 @@ def str_to_decimal_price(str_val):
             result = val.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
     return result
-
-
-def process_url(url, xpath_dic):
-    """Scrape the url and retrieve the xpath values."""
-    logger.info(F'Scraping Url: "{url}"')
-    result_dic = {}
-
-    if not xpath_dic:
-        raise ValueError('No Xpath specified for this scrape')
-
-    # TODO - Find In Utilities Scraper
-    # Scrape the URL
-    html_source, error_msg = scraper.scrape_url(url)
-    if html_source:
-        html_decoded_string = html_source
-
-        result_dic['values'] = {}
-
-        # Process the Scrape Result
-        for name, xpath in xpath_dic.items():
-            result_dic['values'][name] = {}
-            try:
-                # TODO - Get from Utility HTML Parser
-                result = xpathparser.get_xpath_from_html(xpath, html_decoded_string)
-            except ValueError as error:
-                result_dic['values'][name]['error'] = str(error)
-            else:
-                result_dic['values'][name]['value'] = result
-    else:
-        result_dic['error'] = error_msg
-
-    return result_dic

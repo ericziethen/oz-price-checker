@@ -11,43 +11,6 @@ from pricefinderapp.management.commands import scrape_products
 from tests import common
 
 
-def test_no_xpath_values_specified():
-    with pytest.raises(ValueError):
-        scrape_products.process_url(common.TEST_PAGE_NOT_FOUND, {})
-
-
-def test_invalid_url():
-    xpath_dic = {
-        'price': common.TEST_PAGE_WITH_PRICE_20_XPATH,
-        'price-not-found': '//price-not-found/text()',
-        'invalid_xpath': common.INVALID_XPATH
-    }
-    result = scrape_products.process_url(common.TEST_PAGE_NOT_FOUND, xpath_dic)
-
-    assert 'values' not in result
-    assert result['error']
-
-
-def test_price_from_url():
-    xpath_dic = {
-        'price': common.TEST_PAGE_WITH_PRICE_20_XPATH,
-        'price-not-found': '//price-not-found/text()',
-        'invalid_xpath': common.INVALID_XPATH
-    }
-    result = scrape_products.process_url(common.TEST_PAGE_WITH_PRICE_20, xpath_dic)
-
-    print('RESULT', result)
-
-    assert result['values']['price']['value'] == '20'
-    assert 'error' not in result['values']['price']
-
-    assert result['values']['price-not-found']['value'] is None
-    assert 'error' not in result['values']['price']
-
-    assert 'value' not in result['values']['invalid_xpath']
-    assert result['values']['invalid_xpath']['error']
-
-
 VALID_DECIMAL_PRICES = [
     ('0', '0.00'),
     ('0.0', '0.00'),
@@ -94,7 +57,7 @@ class TestScrapeProducts(TestCase):
         with self.assertRaises(NotImplementedError):
             scrape_products.process_products(0)
 
-    def test_scrape_products_good(self):
+    def test_scrape_full_price_ok(self):
         Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_100, name='Tomatoes 100')
         Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
 
@@ -118,23 +81,65 @@ class TestScrapeProducts(TestCase):
 
         self.assertEqual(ProductPrice.objects.all().count(), 0)
         scrape_products.process_products(0)
-        product_prices = ProductPrice.objects.all()
-        self.assertEqual(product_prices.count(), 1)
-
-        entry = product_prices.first()
-        self.assertIsNone(entry.price)
-        self.assertIsNotNone(entry.error)
-
+        self.assertEqual(ProductPrice.objects.all().count(), 0)
 
     def test_scrape_product_url_not_found(self):
         Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_NOT_FOUND, name='Tomatoes 20')
 
         self.assertEqual(ProductPrice.objects.all().count(), 0)
         scrape_products.process_products(0)
-        product_prices = ProductPrice.objects.all()
-        self.assertEqual(product_prices.count(), 1)
+        self.assertEqual(ProductPrice.objects.all().count(), 0)
 
-        entry = product_prices.first()
-        print('>>> ENTRY', entry.__dict__)
-        self.assertIsNone(entry.price)
-        self.assertIsNotNone(entry.error)
+
+class TestScrapeProductsWithSplitPrice(TestCase):
+
+    def setUp(self):
+        self.currency = Currency.objects.create(name='AUD')
+        self.scrape_type_price_whole_num = ScrapeType.objects.create(name='PriceWholeNumber')
+        self.scrape_type_price_fraction = ScrapeType.objects.create(name='PriceFraction')
+        self.store = Store.objects.create(name='Woolworths', currency=self.currency, dynamic_page=False)
+
+    def test_scrape_whole_price_only(self):
+        ScrapeTemplate.objects.create(
+            store=self.store, scrape_type=self.scrape_type_price_whole_num,
+            xpath=common.TEST_PAGE_WITH_PRICE_12_95_XPATH_WHOLE)
+
+        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_12_95,
+                               name='Tomatoes 12.95')
+        self.assertEqual(ProductPrice.objects.all().count(), 0)
+        scrape_products.process_products(0)
+        self.assertEqual(ProductPrice.objects.all().count(), 1)
+
+        price_list = ProductPrice.objects.values_list('price', flat=True)
+        self.assertListEqual(sorted(price_list), [Decimal('12.00')])
+
+    def test_scrape_fraction_price_only(self):
+        ScrapeTemplate.objects.create(
+            store=self.store, scrape_type=self.scrape_type_price_fraction,
+            xpath=common.TEST_PAGE_WITH_PRICE_12_95_XPATH_FRACTION)
+
+        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_12_95,
+                               name='Tomatoes 12.95')
+        self.assertEqual(ProductPrice.objects.all().count(), 0)
+        scrape_products.process_products(0)
+        self.assertEqual(ProductPrice.objects.all().count(), 1)
+
+        price_list = ProductPrice.objects.values_list('price', flat=True)
+        self.assertListEqual(sorted(price_list), [Decimal('0.95')])
+
+    def test_scrape_whole_and_fraction_price(self):
+        ScrapeTemplate.objects.create(
+            store=self.store, scrape_type=self.scrape_type_price_whole_num,
+            xpath=common.TEST_PAGE_WITH_PRICE_12_95_XPATH_WHOLE)
+        ScrapeTemplate.objects.create(
+            store=self.store, scrape_type=self.scrape_type_price_fraction,
+            xpath=common.TEST_PAGE_WITH_PRICE_12_95_XPATH_FRACTION)
+
+        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_12_95,
+                               name='Tomatoes 12.95')
+        self.assertEqual(ProductPrice.objects.all().count(), 0)
+        scrape_products.process_products(0)
+        self.assertEqual(ProductPrice.objects.all().count(), 1)
+
+        price_list = ProductPrice.objects.values_list('price', flat=True)
+        self.assertListEqual(sorted(price_list), [Decimal('12.95')])
