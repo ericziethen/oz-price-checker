@@ -1,7 +1,13 @@
+
+import os
+
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 
 from pricefinderapp.models import (
@@ -10,6 +16,8 @@ from pricefinderapp.models import (
 from pricefinderapp.management.commands import scrape_products
 from tests import common
 
+VALID_FILE_PATH = Path('ozpricechecker') / 'pricefinderapp' / '__init__.py'
+INVALID_FILE_PATH = 'this-is-not-a-path'
 
 VALID_DECIMAL_PRICES = [
     ('0', '0.00'),
@@ -39,6 +47,38 @@ def test_invalid_decimal(str_val):
     assert scrape_products.str_to_decimal_price(str_val) is None
 
 
+class CommandArgumentTestCase(TestCase):
+
+    def test_no_argument_given(self):
+        with pytest.raises(CommandError):
+            args = []
+            opts = {}
+            call_command('scrape_products', *args, **opts)
+
+    def test_only_single_argument_given(self):
+        with pytest.raises(CommandError):
+            args = [VALID_FILE_PATH]
+            opts = {}
+            call_command('scrape_products', *args, **opts)
+
+    def test_first_arg_invalid_path(self):
+        with pytest.raises(CommandError):
+            args = [INVALID_FILE_PATH, VALID_FILE_PATH]
+            opts = {}
+            call_command('scrape_products', *args, **opts)
+
+    def test_second_arg_invalid_path(self):
+        with pytest.raises(CommandError):
+            args = [VALID_FILE_PATH, INVALID_FILE_PATH]
+            opts = {}
+            call_command('scrape_products', *args, **opts)
+
+    def test_2_valid_path(self):
+        args = [VALID_FILE_PATH, VALID_FILE_PATH]
+        opts = {}
+        call_command('scrape_products', *args, **opts)
+
+
 class TestScrapeProducts(TestCase):
 
     def setUp(self):
@@ -48,14 +88,6 @@ class TestScrapeProducts(TestCase):
         ScrapeTemplate.objects.create(
             store=self.store, scrape_type=self.scrape_type_price,
             xpath=common.TEST_PAGE_WITH_PRICE_20_XPATH)
-
-    def test_dynamic_pages_not_implemented(self):
-        self.store.dynamic_page = True
-        self.store.save()
-
-        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
-        with self.assertRaises(NotImplementedError):
-            scrape_products.process_products(0)
 
     def test_scrape_full_price_ok(self):
         Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_100, name='Tomatoes 100')

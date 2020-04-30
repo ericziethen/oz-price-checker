@@ -1,11 +1,12 @@
 """Command to scrape Product informatiuon."""
 
 import logging
+import os
 import time
 
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from pricefinderapp.models import Product, ProductPrice, ScrapeTemplate
 
@@ -18,21 +19,33 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class Command(BaseCommand):
     """Command Class."""
 
+    def add_arguments(self, parser):
+        """Add command line arguments."""
+        parser.add_argument('chrome_exec_path', type=str)
+        parser.add_argument('chrome_webdriver_path', type=str)
+
     def handle(self, *args, **options):
         """Handle the Command."""
+        chrome_exec_path = options['chrome_exec_path']
+        chrome_webdriver_path = options['chrome_webdriver_path']
+
+        if not os.path.exists(chrome_exec_path) or not os.path.exists(chrome_webdriver_path):
+            raise CommandError('Need to Specify [chrome_exec_path] and [chrome_webdriver_path]')
+
         process_products(5)
 
 
-def process_products(scrape_delay):
+def process_products(scrape_delay, *, chrome_exec_path=None, chrome_webdriver_path=None):
     """Process the products with the given delay."""
     for prod in Product.objects.all():
 
         store = prod.store
 
-        # TODO - ENABLE and setup selenium support as per arguments
-        #store.dynamic_page = True
-        if store.dynamic_page:
-            raise NotImplementedError('Need to enable Selenium Scraping to support Dynamic Pages')
+        # If chrome execs passed force selenium mode
+        if chrome_exec_path and chrome_webdriver_path:
+            store.dynamic_page = True
+            os.environ['CHROME_EXEC_PATH'] = chrome_exec_path
+            os.environ['CHROME_WEBDRIVER_PATH'] = chrome_webdriver_path
 
         # Scrape the Product Page
         prod_url = prod.full_url
