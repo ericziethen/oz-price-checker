@@ -1,2 +1,3 @@
 ﻿Name,Base Url,Dynamic Page,Currency
 Woolworth,https://www.woolworths.com.au/shop/productdetails,True,AUD
+Coles,https://shop.coles.com.au/a/casuarina/product,False,AUD

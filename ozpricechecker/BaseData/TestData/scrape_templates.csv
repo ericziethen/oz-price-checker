@@ -1,2 +1,5 @@
 ﻿Store,Scrape Type,Xpath
-Woolworth,Price,//fake-xpath
+Woolworth,PriceWholeNumber,"//wow-product-details-panel//span[contains(@class,'price-dollars')]"
+Woolworth,PriceFraction,"//wow-product-details-panel//span[contains(@class,'price-cents')]"
+Coles,PriceWholeNumber,"//span[contains(@class,'dollar-value') and contains(@data-ng-bind,'productDisplayVM.product.price.dollarValue')]"
+Coles,PriceFraction,"//span[contains(@class,'cent-value')]//span[contains(@data-ng-bind,'productDisplayVM.product.price.centValue')]"

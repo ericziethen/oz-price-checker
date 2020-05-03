@@ -10,7 +10,6 @@ from django.core.management.base import BaseCommand, CommandError
 
 from pricefinderapp.models import Product, ProductPrice, ScrapeTemplate
 
-from utils.htmlparse import xpathparser
 from utils.scrape import scraper
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -32,73 +31,78 @@ class Command(BaseCommand):
         if not os.path.exists(chrome_exec_path) or not os.path.exists(chrome_webdriver_path):
             raise CommandError('Need to Specify [chrome_exec_path] and [chrome_webdriver_path]')
 
-        process_products(5)
+        process_products(5, chrome_exec_path=chrome_exec_path, chrome_webdriver_path=chrome_webdriver_path)
 
 
-def process_products(scrape_delay, *, chrome_exec_path=None, chrome_webdriver_path=None):
+def process_products(scrape_delay_seconds, *, chrome_exec_path, chrome_webdriver_path):
     """Process the products with the given delay."""
     for prod in Product.objects.all():
 
-        store = prod.store
+        # Get the Xpath List for Price
+        xpath_tup_list = get_price_xpaths(prod)
 
-        # If chrome execs passed force selenium mode
-        if chrome_exec_path and chrome_webdriver_path:
-            store.dynamic_page = True
-            os.environ['CHROME_EXEC_PATH'] = chrome_exec_path
-            os.environ['CHROME_WEBDRIVER_PATH'] = chrome_webdriver_path
+        start_time = datetime.now()
 
-        # Scrape the Product Page
-        prod_url = prod.full_url
-        html_source, error_msg = scraper.scrape_url(prod_url)
+        # Scrape the Price
+        result = scraper.scrape_page(
+            chrome=chrome_exec_path,
+            chrome_webdriver=chrome_webdriver_path,
+            url=prod.full_url,
+            xpath_tup_list=xpath_tup_list
+        )
 
-        if html_source:
-            # Scrape Price Data
-            parse_produc_price(prod, html_source)
+        # Process Price Data
+        process_price_scrape_result(prod, result)
 
-            # delay between scrape attempts
-            time.sleep(scrape_delay)
-
-        else:
-            logger.error(F'Failed to Scrape Product "{prod} - Url: {prod_url}, Error: {error_msg}')
+        # Sleep
+        time.sleep(scrape_delay_seconds)
 
 
-def parse_produc_price(db_prod, html_source):
-    """Parse the Product Prices."""
-    price_str = None
+def get_price_xpaths(prod):
+    """Get the Xpath list for Times to Scrape."""
+    xpath_tup_list = []
 
-    # Parse the Full Price
-    price_str = parse_template(db_prod, 'Price', html_source)
+    # Check full Price Xpath
+    full_price_xpath = get_xpath_for_scrape_type(prod, 'Price')
+    if full_price_xpath:
+        xpath_tup_list.append(('Price', full_price_xpath))
 
-    # Parse the Partial Price
-    if not price_str:
-        whole_str = parse_template(db_prod, 'PriceWholeNumber', html_source)
-        fraction_str = parse_template(db_prod, 'PriceFraction', html_source)
+    # Check Partial Price Xpath
+    whole_xpath = get_xpath_for_scrape_type(prod, 'PriceWholeNumber')
+    fraction_xpath = get_xpath_for_scrape_type(prod, 'PriceFraction')
+    if whole_xpath and fraction_xpath:
+        xpath_tup_list.append(('PriceWholeNumber', whole_xpath))
+        xpath_tup_list.append(('PriceFraction', fraction_xpath))
 
-        price_str = F'{whole_str}.{fraction_str}'
+    return xpath_tup_list
+
+
+def get_xpath_for_scrape_type(prod, scrape_type):
+    xpath = None
+    template = ScrapeTemplate.objects.filter(store=prod.store, scrape_type__name=scrape_type).first()
+
+    if template:
+        xpath = template.xpath
+
+    return xpath
+
+def process_price_scrape_result(prod, result):
+    price_str = ''
+
+    if 'Price' in result:
+        price_str = result['Price']
+    elif 'PriceWholeNumber' in result and 'PriceFraction' in result:
+        price_str = F'''{result['PriceWholeNumber']}.{result['PriceFraction']}'''
 
     if price_str:
         price = str_to_decimal_price(price_str)
 
         if price:
-            ProductPrice.objects.create(product=db_prod, price=price)
+            ProductPrice.objects.create(product=prod, price=price)
         else:
             logger.error(F'Failed to convert "{price_str}" to Decimal')
     else:
-        logger.error(F'No Price found for Product: "{db_prod}"')
-
-
-def parse_template(prod, scrape_type, html):
-    """Parse the template."""
-    result = ''
-    template = ScrapeTemplate.objects.filter(store=prod.store, scrape_type__name=scrape_type).first()
-
-    if template:
-        try:
-            result = xpathparser.get_xpath_from_html(template.xpath, html)
-        except ValueError as error:
-            logger.error(F'Failed to parse xpath: "{template.xpath}" for Product: {prod} - Error: {error}')
-
-    return result
+        logger.error(F'No Price found for Product: "{prod}"')
 
 
 def str_to_decimal_price(str_val):
