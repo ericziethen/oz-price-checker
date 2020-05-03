@@ -5,7 +5,6 @@ omit =
     */migrations/*
     ozpricechecker/utils/project_logger.py
     ozpricechecker/manage.py
-    ozpricechecker/ozpricechecker/wsgi.py
 
 [report]
 omit =
@@ -15,3 +14,9 @@ omit =
     ozpricechecker/utils/project_logger.py
     ozpricechecker/manage.py
     ozpricechecker/ozpricechecker/wsgi.py
+
+exclude_lines =
+    class SeleniumChromeSession
+    class WaitCondition
+    class ScraperWait
+    def scrape_with_selenium
