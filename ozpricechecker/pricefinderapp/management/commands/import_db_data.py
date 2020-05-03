@@ -61,7 +61,7 @@ class Command(BaseCommand):
     @staticmethod
     def populate_currencies(csv_data):
         """Populate Currency db."""
-        logger.info(F'Populate Currencies')
+        logger.info('Populate Currencies')
         with transaction.atomic():
             for row in csv_data:
                 Currency.objects.update_or_create(name=row['ISO'])
@@ -69,7 +69,7 @@ class Command(BaseCommand):
     @staticmethod
     def populate_stores(csv_data):
         """Populate Store db."""
-        logger.info(F'Populate Stores')
+        logger.info('Populate Stores')
         with transaction.atomic():
             for row in csv_data:
                 Store.objects.update_or_create(
@@ -82,7 +82,7 @@ class Command(BaseCommand):
     @staticmethod
     def populate_scrape_types(csv_data):
         """Populate Scrape Type db."""
-        logger.info(F'Populate Scrape Types')
+        logger.info('Populate Scrape Types')
         with transaction.atomic():
             for row in csv_data:
                 ScrapeType.objects.update_or_create(name=row['Name'])
@@ -90,7 +90,7 @@ class Command(BaseCommand):
     @staticmethod
     def populate_scrape_templates(csv_data):
         """Populate Scrape Template db."""
-        logger.info(F'Populate Scrape Templates')
+        logger.info('Populate Scrape Templates')
         with transaction.atomic():
             for row in csv_data:
                 ScrapeTemplate.objects.update_or_create(
@@ -102,7 +102,7 @@ class Command(BaseCommand):
     @staticmethod
     def populate_products(csv_data):
         """Populate Product db."""
-        logger.info(F'Populate Products')
+        logger.info('Populate Products')
         with transaction.atomic():
             for row in csv_data:
                 Product.objects.update_or_create(

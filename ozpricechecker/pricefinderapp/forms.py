@@ -29,6 +29,6 @@ class StoreCreateForm(ModelForm):
 
         # Check if we can reach the url
         if not check_url(base_url, local_only=False):
-            raise ValidationError(F'Cannot Reach URL', code='cannot_reach_url')
+            raise ValidationError('Cannot Reach URL', code='cannot_reach_url')
 
         return base_url
