@@ -12,9 +12,10 @@ from pricefinderapp.models import (
     Currency, Product, ScrapeType, ScrapeTemplate, Store
 )
 
+
 class CommandArgumentTestCase(TestCase):
 
-    def test_no_argument_given(self):
+    def test_no_argument_given(self):  # pylint: disable=no-self-use
         with pytest.raises(CommandError):
             args = []
             opts = {}

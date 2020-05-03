@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-USER_AGENT_CHROME = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36'
+USER_AGENT_CHROME = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36'  # pylint: disable=line-too-long
 
 
 class SeleniumChromeSession():
@@ -27,8 +27,6 @@ class SeleniumChromeSession():
             F'user-agent={USER_AGENT_CHROME}')
         chrome_options.binary_location = chrome
 
-
-        # There 
         chrome_options.add_argument('--headless')
 
         chrome_options.add_argument("start-maximized")
@@ -53,11 +51,11 @@ class SeleniumChromeSession():
         # Avoiding Selenium Detection
         # https://stackoverflow.com/questions/53039551/selenium-webdriver-modifying-navigator-webdriver-flag-to-prevent-selenium-detec/53040904#53040904
         self.driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-        "source": """
-            Object.defineProperty(navigator, 'webdriver', {
-            get: () => undefined
-            })
-        """
+            "source": """
+                Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+                })
+            """
         })
 
     def __enter__(self):
@@ -71,6 +69,7 @@ class WaitCondition():
     """Define a Wait Condition."""
 
     def __init__(self, name, locator_type, search_str):
+        """Create a Wait Condition."""
         self.name = name
         self.type = locator_type
         self.search_str = search_str
@@ -121,6 +120,7 @@ class ScraperWait():
 
 
 def scrape_with_selenium(chrome, chrome_webdriver, url, xpath_tup_list, timeout):
+    """Scrape using Selenium and Chrome."""
     result_dic = {}
 
     with SeleniumChromeSession(chrome=chrome, chrome_webdriver=chrome_webdriver) as driver:
@@ -145,9 +145,7 @@ def scrape_with_selenium(chrome, chrome_webdriver, url, xpath_tup_list, timeout)
 
 
 def scrape_page(*, chrome, chrome_webdriver, url, xpath_tup_list):
-    """
-        xpath_tup_list = [(Name, Xpath), (Name, Xpath)]
-    """
+    """xpath_tup_list = [(Name, Xpath), (Name, Xpath)]."""
     if not xpath_tup_list:
         raise ValueError('No Xpath Specified')
 

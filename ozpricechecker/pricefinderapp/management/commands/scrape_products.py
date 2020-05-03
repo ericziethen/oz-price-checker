@@ -41,8 +41,6 @@ def process_products(scrape_delay_seconds, *, chrome_exec_path, chrome_webdriver
         # Get the Xpath List for Price
         xpath_tup_list = get_price_xpaths(prod)
 
-        start_time = datetime.now()
-
         # Scrape the Price
         result = scraper.scrape_page(
             chrome=chrome_exec_path,
@@ -78,6 +76,7 @@ def get_price_xpaths(prod):
 
 
 def get_xpath_for_scrape_type(prod, scrape_type):
+    """Get the Xpath for a specific Scrape Type."""
     xpath = None
     template = ScrapeTemplate.objects.filter(store=prod.store, scrape_type__name=scrape_type).first()
 
@@ -86,7 +85,9 @@ def get_xpath_for_scrape_type(prod, scrape_type):
 
     return xpath
 
+
 def process_price_scrape_result(prod, result):
+    """Process the result of the Price Scrape."""
     price_str = ''
 
     if 'Price' in result:
