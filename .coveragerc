@@ -5,6 +5,7 @@ omit =
     */migrations/*
     ozpricechecker/utils/project_logger.py
     ozpricechecker/manage.py
+    ozpricechecker/ozpricechecker/wsgi.py
 
 [report]
 omit =
@@ -13,3 +14,4 @@ omit =
     */migrations/*
     ozpricechecker/utils/project_logger.py
     ozpricechecker/manage.py
+    ozpricechecker/ozpricechecker/wsgi.py
