@@ -1,81 +1,17 @@
+
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 
-from pricefinderapp.models import (
-    Currency, Product, ProductPrice, ScrapeTemplate, ScrapeType, Store
-)
 from pricefinderapp.management.commands import scrape_products
-from tests import common
 
-
-def test_page_found():
-    result = scrape_products.scrape_product_url(common.TEST_PAGE_WITH_PRICE_20)
-    assert result[0] is not None
-    assert result[1] is None
-
-
-def test_page_not_found():
-    result = scrape_products.scrape_product_url(common.TEST_PAGE_NOT_FOUND)
-    assert result[0] is None
-    assert result[1] is not None
-
-
-def test_get_price_from_html():
-    xpath = common.TEST_PAGE_WITH_PRICE_20_XPATH
-    price = scrape_products.get_xpath_from_html(xpath, common.HTML_WITH_PRICE)
-    assert price == '20'
-
-
-def test_price_not_in_html():
-    xpath = '//price-not-found/text()'
-    price = scrape_products.get_xpath_from_html(xpath, common.HTML_WITH_PRICE)
-    assert price is None
-
-
-def test_invalid_xpath():
-    with pytest.raises(ValueError):
-        scrape_products.get_xpath_from_html(common.INVALID_XPATH, common.HTML_WITH_PRICE)
-
-
-def test_no_xpath_values_specified():
-    with pytest.raises(ValueError):
-        scrape_products.process_url(common.TEST_PAGE_NOT_FOUND, {})
-
-
-def test_invalid_url():
-    xpath_dic = {
-        'price': common.TEST_PAGE_WITH_PRICE_20_XPATH,
-        'price-not-found': '//price-not-found/text()',
-        'invalid_xpath': common.INVALID_XPATH
-    }
-    result = scrape_products.process_url(common.TEST_PAGE_NOT_FOUND, xpath_dic)
-
-    assert 'values' not in result
-    assert result['error']
-
-
-def test_price_from_url():
-    xpath_dic = {
-        'price': common.TEST_PAGE_WITH_PRICE_20_XPATH,
-        'price-not-found': '//price-not-found/text()',
-        'invalid_xpath': common.INVALID_XPATH
-    }
-    result = scrape_products.process_url(common.TEST_PAGE_WITH_PRICE_20, xpath_dic)
-
-    print('RESULT', result)
-
-    assert result['values']['price']['value'] == '20'
-    assert 'error' not in result['values']['price']
-
-    assert result['values']['price-not-found']['value'] is None
-    assert 'error' not in result['values']['price']
-
-    assert 'value' not in result['values']['invalid_xpath']
-    assert result['values']['invalid_xpath']['error']
-
+VALID_FILE_PATH = Path('ozpricechecker') / 'pricefinderapp' / '__init__.py'
+INVALID_FILE_PATH = 'this-is-not-a-path'
 
 VALID_DECIMAL_PRICES = [
     ('0', '0.00'),
@@ -105,64 +41,33 @@ def test_invalid_decimal(str_val):
     assert scrape_products.str_to_decimal_price(str_val) is None
 
 
-class TestScrapeProducts(TestCase):
+class CommandArgumentTestCase(TestCase):
 
-    def setUp(self):
-        self.currency = Currency.objects.create(name='AUD')
-        self.scrape_type_price = ScrapeType.objects.create(name='Price')
-        self.store = Store.objects.create(name='Woolworths', currency=self.currency, dynamic_page=False)
-        ScrapeTemplate.objects.create(
-            store=self.store, scrape_type=self.scrape_type_price,
-            xpath=common.TEST_PAGE_WITH_PRICE_20_XPATH)
+    def test_no_argument_given(self):  # pylint: disable=no-self-use
+        with pytest.raises(CommandError):
+            args = []
+            opts = {}
+            call_command('scrape_products', *args, **opts)
 
-    def test_dynamic_pages_not_implemented(self):
-        self.store.dynamic_page = True
-        self.store.save()
+    def test_only_single_argument_given(self):  # pylint: disable=no-self-use
+        with pytest.raises(CommandError):
+            args = [VALID_FILE_PATH]
+            opts = {}
+            call_command('scrape_products', *args, **opts)
 
-        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
-        with self.assertRaises(NotImplementedError):
-            scrape_products.process_products(0)
+    def test_first_arg_invalid_path(self):  # pylint: disable=no-self-use
+        with pytest.raises(CommandError):
+            args = [INVALID_FILE_PATH, VALID_FILE_PATH]
+            opts = {}
+            call_command('scrape_products', *args, **opts)
 
-    def test_scrape_products_good(self):
-        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_100, name='Tomatoes 100')
-        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
+    def test_second_arg_invalid_path(self):  # pylint: disable=no-self-use
+        with pytest.raises(CommandError):
+            args = [VALID_FILE_PATH, INVALID_FILE_PATH]
+            opts = {}
+            call_command('scrape_products', *args, **opts)
 
-        self.assertEqual(ProductPrice.objects.all().count(), 0)
-        scrape_products.process_products(0)
-        self.assertEqual(ProductPrice.objects.all().count(), 2)
-
-        price_list = ProductPrice.objects.values_list('price', flat=True)
-        self.assertListEqual(sorted(price_list), [Decimal('20.00'), Decimal('100.00')])
-
-    def test_scrape_product_invalid_xpath(self):
-        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_WITH_PRICE_20, name='Tomatoes 20')
-
-        template = ScrapeTemplate.objects.filter(store=self.store, scrape_type=self.scrape_type_price).first()
-        self.assertEqual(template.xpath, common.TEST_PAGE_WITH_PRICE_20_XPATH)
-        template.xpath = common.INVALID_XPATH
-        template.save()
-
-        template = ScrapeTemplate.objects.filter(store=self.store, scrape_type=self.scrape_type_price).first()
-        self.assertEqual(template.xpath, common.INVALID_XPATH)
-
-        self.assertEqual(ProductPrice.objects.all().count(), 0)
-        scrape_products.process_products(0)
-        product_prices = ProductPrice.objects.all()
-        self.assertEqual(product_prices.count(), 1)
-
-        entry = product_prices.first()
-        self.assertIsNone(entry.price)
-        self.assertIsNotNone(entry.error)
-
-    def test_scrape_product_url_not_found(self):
-        Product.objects.create(store=self.store, prod_url=common.TEST_PAGE_NOT_FOUND, name='Tomatoes 20')
-
-        self.assertEqual(ProductPrice.objects.all().count(), 0)
-        scrape_products.process_products(0)
-        product_prices = ProductPrice.objects.all()
-        self.assertEqual(product_prices.count(), 1)
-
-        entry = product_prices.first()
-        print('>>> ENTRY', entry.__dict__)
-        self.assertIsNone(entry.price)
-        self.assertIsNotNone(entry.error)
+    def test_2_valid_path(self):  # pylint: disable=no-self-use
+        args = [VALID_FILE_PATH, VALID_FILE_PATH]
+        opts = {}
+        call_command('scrape_products', *args, **opts)

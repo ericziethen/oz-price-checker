@@ -1,7 +1,11 @@
 
 from pathlib import Path
 
+import os
+import pytest
+
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 
 from pricefinderapp.models import (
@@ -9,10 +13,37 @@ from pricefinderapp.models import (
 )
 
 
+class CommandArgumentTestCase(TestCase):
+
+    def test_no_argument_given(self):  # pylint: disable=no-self-use
+        with pytest.raises(CommandError):
+            args = []
+            opts = {}
+            call_command('import_db_data', *args, **opts)
+
+    def test_invalid_directory_specified(self):
+        invalid_path = 'this-is-not-a-path'
+        self.assertFalse(os.path.exists(invalid_path))
+
+        with pytest.raises(CommandError):
+            args = [invalid_path]
+            opts = {}
+            call_command('import_db_data', *args, **opts)
+
+    def test_csv_files_not_found(self):
+        path = Path('ozpricechecker') / 'pricefinderapp' / 'tests'
+        self.assertTrue(os.path.exists(path))
+
+        with pytest.raises(CommandError):
+            args = [path]
+            opts = {}
+            call_command('import_db_data', *args, **opts)
+
+
 class CommandsTestCase(TestCase):
 
     def setUp(self):
-        args = [Path('ozpricechecker') / 'tests' / 'TestFiles' / 'DbData']
+        args = [Path('ozpricechecker') / 'pricefinderapp' / 'tests' / 'TestFiles' / 'DbData']
         opts = {}
         call_command('import_db_data', *args, **opts)
 
