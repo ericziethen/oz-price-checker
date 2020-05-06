@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 
-# Create your models here.
+
 class Currency(models.Model):
     """Currency master."""
 
@@ -84,7 +84,8 @@ class ProductPrice(models.Model):
 
         unique_together = (('product', 'date_time'),)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
+        """Customize Save Behavior."""
         if self.date_time is None:
             self.date_time = timezone.now()
         super().save(*args, **kwargs)
