@@ -12,7 +12,7 @@ from .models import (
 class ProductPriceAdmin(admin.ModelAdmin):
     """Admin model for ProductPrice."""
 
-    list_display = ('product', 'date_time', 'price', 'error')
+    list_display = ('product', 'date_time', 'price')
 
 
 class ScrapeTemplateAdmin(admin.ModelAdmin):
