@@ -3,6 +3,11 @@
 {% block content %}
     <h1 class="text-capitalize" align="center">{{ user.get_username }}'s Product List</h1>
 
+    <form mothod="GET">
+        {{filter.form}}
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    </form>
+
     <table class="table">
         <tr>
             <thead class="thead-light">
@@ -19,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for user_product in userproduct_list %}
+                {% for user_product in filter.qs %}
                     {% if user_product.is_threshhold_reached %}
                         <tr class="table-danger">
                     {% else %}
