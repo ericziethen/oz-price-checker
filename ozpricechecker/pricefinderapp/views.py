@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.http import HttpResponse
 from pricefinderapp.models import UserProduct, Product
+from pricefinderapp.filters import UserProductFilter
 
 
 class UserProductListView(LoginRequiredMixin, ListView):  # pylint: disable=too-many-ancestors
@@ -19,6 +20,12 @@ class UserProductListView(LoginRequiredMixin, ListView):  # pylint: disable=too-
     def get_queryset(self):
         """Only for current user."""
         return UserProduct.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        """Provide context data for UserProduct."""
+        context = super(UserProductListView, self).get_context_data(**kwargs)
+        context['filter'] = UserProductFilter(self.request.GET, queryset=self.get_queryset())
+        return context
 
 
 class UserProductCreateView(LoginRequiredMixin, CreateView):
