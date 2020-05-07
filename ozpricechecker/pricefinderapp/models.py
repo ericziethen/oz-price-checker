@@ -3,12 +3,12 @@
 from decimal import Decimal
 from urllib.parse import urljoin
 
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.contrib.auth.models import User
+from django.utils import timezone
 
 
-# Create your models here.
 class Currency(models.Model):
     """Currency master."""
 
@@ -74,16 +74,21 @@ class ProductPrice(models.Model):
     """Product price details."""
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    date_time = models.DateTimeField(auto_now=True)
+    date_time = models.DateTimeField()
     price = models.DecimalField(
-        max_digits=12, blank=True, null=True, decimal_places=2,
+        max_digits=12, decimal_places=2,
         validators=[MinValueValidator(Decimal('0.00'))])
-    error = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:
         """ProductPrice meta data."""
 
         unique_together = (('product', 'date_time'),)
+
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
+        """Customize Save Behavior."""
+        if self.date_time is None:
+            self.date_time = timezone.now()
+        super().save(*args, **kwargs)
 
 
 class UserProduct(models.Model):

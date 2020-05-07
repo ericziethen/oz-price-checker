@@ -1,6 +1,6 @@
-import time
 
 from django.test import TestCase
+from django.utils import timezone
 
 from parameterized import parameterized
 
@@ -25,18 +25,30 @@ class SetupTests(TestCase):
         product = Product.objects.create(store=self.store, prod_url='/1234/Tomatoes', name='Super Tomatoes')
         self.assertEqual(product.latest_price, None)
         self.assertEqual(product.date_for_latest_price, None)
-        product_price_1 = ProductPrice.objects.create(product=product, price=10)
-        self.assertEqual(product.date_for_latest_price, product_price_1.date_time)
-        time.sleep(1)
-        product_price_2 = ProductPrice.objects.create(product=product, price=50)
-        time.sleep(1)
-        product_price_3 = ProductPrice.objects.create(product=product, price=25)
-        self.assertEqual(product.latest_price, product_price_3.price)
-        self.assertEqual(product.date_for_latest_price, product_price_3.date_time)
 
-        product_price_3.delete()
+        time_now = timezone.now()
+        # Only Product = Latest Price
+        product_price_1 = ProductPrice.objects.create(
+            product=product, price=10, date_time=time_now)
+        self.assertEqual(product.latest_price, product_price_1.price)
+        self.assertEqual(product.date_for_latest_price, product_price_1.date_time)
+
+        # 2nd Product, later time becomes latest Price
+        product_price_2 = ProductPrice.objects.create(
+            product=product, price=50, date_time=time_now + timezone.timedelta(seconds=10))
         self.assertEqual(product.latest_price, product_price_2.price)
         self.assertEqual(product.date_for_latest_price, product_price_2.date_time)
+
+        # 3rd Product, Earlier time than 2nd, 2nd stays latest product
+        product_price_3 = ProductPrice.objects.create(
+            product=product, price=25, date_time=time_now + timezone.timedelta(seconds=5))
+        self.assertEqual(product.latest_price, product_price_2.price)
+        self.assertEqual(product.date_for_latest_price, product_price_2.date_time)
+
+        # Delete 2nd, 3rd becomes Latest Price
+        product_price_2.delete()
+        self.assertEqual(product.latest_price, product_price_3.price)
+        self.assertEqual(product.date_for_latest_price, product_price_3.date_time)
 
 
 class TestProductAttributes(TestCase):
