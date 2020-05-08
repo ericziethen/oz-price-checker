@@ -1,7 +1,5 @@
 """Testing forms."""
 
-from unittest import mock
-
 from django.test import TestCase
 
 from pricefinderapp.forms import StoreCreateForm
