@@ -2,7 +2,6 @@
 
 from django.core.validators import URLValidator
 from django.forms import ModelForm, ValidationError
-from ezscrape.scraping.scraper import check_url
 from .models import Store
 
 
@@ -26,9 +25,5 @@ class StoreCreateForm(ModelForm):
         except ValidationError as error:
             raise ValidationError(F'Invalid Url: {error} - Dont forget to include the schema like http or https',
                                   code='invalid_format')
-
-        # Check if we can reach the url
-        if not check_url(base_url, local_only=False):
-            raise ValidationError('Cannot Reach URL', code='cannot_reach_url')
 
         return base_url

@@ -6,4 +6,4 @@ lxml
 django
 
 # Network Related
-ezscrape
+selenium
