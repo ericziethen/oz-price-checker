@@ -44,7 +44,7 @@ class UserProductFilter(django_filters.FilterSet):
     #price_max = django_filters.NumberFilter(label='PriceMax')
     #price_max = MyFilter(label='PriceMax')
 
-    threshold = MyNumberFilter(label='PriceMax <=')
+    price_max = MyNumberFilter(label='PriceMax <=')
 
     class Meta:
         """UserProduct filter meta data."""
@@ -53,7 +53,7 @@ class UserProductFilter(django_filters.FilterSet):
         # fields = ('product', 'threshhold')
         fields = {
             'product': ['exact'],
-            #'threshhold': ['lte', 'gt'],
+            'threshhold': ['lte', 'gt'],
             # 'product.latest_price': ['exact'],
         }
 
