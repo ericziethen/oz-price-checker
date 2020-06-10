@@ -24,6 +24,8 @@ VALID_DECIMAL_PRICES = [
     ('15.235', '15.24'),
     ('15.236', '15.24'),
 ]
+
+
 @pytest.mark.parametrize('str_val, expected_val', VALID_DECIMAL_PRICES)
 def test_valid_decimal(str_val, expected_val):
     assert scrape_products.str_to_decimal_price(str_val) == Decimal(expected_val)
@@ -36,6 +38,8 @@ INVALID_DECIMAL_PRICES = [
     ('-15'),
     ('-2.3'),
 ]
+
+
 @pytest.mark.parametrize('str_val', INVALID_DECIMAL_PRICES)
 def test_invalid_decimal(str_val):
     assert scrape_products.str_to_decimal_price(str_val) is None
