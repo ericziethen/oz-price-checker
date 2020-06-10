@@ -55,7 +55,6 @@ class CustomNumberFilter(django_filters.filters.NumberFilter):
         return qs
 
 
-# class CustomDateTimeFromToRangeFilter(django_filters.filters.DateTimeFromToRangeFilter):
 class CustomDateFromToRangeFilter(django_filters.filters.DateFromToRangeFilter):
     """Custome date time range filter."""
 
