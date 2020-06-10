@@ -34,7 +34,7 @@
                             <td align="right" class="font-weight-bold">{{user_product.threshhold}}</td>
                             <td align="right">{{user_product.product.latest_price}}</td>
                             <td>{{user_product.product.store.currency}}</td>
-                            <td align="center">{{user_product.product.date_for_latest_price}}</td>
+                            <td align="center">{{user_product.product.date_for_latest_price|date}}</td>
                             <td align="center">
                                 <a class="text-primary" href="{% url "userproduct_update"  user_product.id  %}">edit</a>
                                 \ 
