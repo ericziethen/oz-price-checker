@@ -12,7 +12,7 @@ class DateInput(forms.DateInput):
 
 
 class CustDateRangeWidget(django_filters.widgets.SuffixedMultiWidget):
-    """Custome date picker wadget."""
+    """Custome date picker widget."""
 
     template_name = 'django_filters/widgets/multiwidget.html'
     suffixes = ['after', 'before']
