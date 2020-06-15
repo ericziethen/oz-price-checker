@@ -37,7 +37,7 @@ install:
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./dev/Travis/RunTravisTests.sh; fi
 
 - python --version --version
-- python -m pip install --upgrade pip setuptools wheel
+- python -m pip install --upgrade pipenv setuptools wheel
 # don't use the '--upgrade' to not upgrade pinned requirements with generic ones
 - pip install -r requirements.txt
 

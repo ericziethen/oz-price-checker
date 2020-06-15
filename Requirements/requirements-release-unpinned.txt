@@ -4,6 +4,7 @@ lxml
 
 # Django Related
 django
+django-filter
 
 # Network Related
 selenium
