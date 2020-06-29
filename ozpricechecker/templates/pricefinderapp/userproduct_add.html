@@ -4,15 +4,41 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h5 class="card-title">Add a product to user's list</h5>
+        <h5 class="card-title">Add a product to your product list</h5>
     </div>
     <div class="card-body">
         <form method="post">
             {% csrf_token %}
-            {{form.as_p}}
-            <button type="submit" class="btn btn-success">Add</button>
+            <table>
+                <tr>
+                    <th class="font-weight-normal">{{ form.product.label_tag }}</th>
+                    <td>
+                        {{ form.product.errors }}
+                        {{ form.product }}
+                        {{ form.product.help_text }}
+                    </td>
+                    <td>
+                        <a class="badge badge-primary" href="{% url "product_add" %}">+</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ form.threshhold.label_tag }}</th>
+                    <td>
+                        {{ form.threshhold.errors }}
+                        {{ form.threshhold }}
+                        {{ form.threshhold.help_text }}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary">Cancel</a>
+                        </button>
+                    </td>
+                </tr>
+            </table>
         </form>
     </div>
 </div>
-<a  href="{% url "product_add" %}">Add Prod</a>
 {% endblock %}
