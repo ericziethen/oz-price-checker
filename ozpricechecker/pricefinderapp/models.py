@@ -35,7 +35,7 @@ class Product(models.Model):
 
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     prod_url = models.TextField()
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, null=False, blank=False)
 
     class Meta:
         """Product meta data."""
