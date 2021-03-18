@@ -9,7 +9,7 @@ click==7.1.2
 codecov==2.1.4
 colorama==0.4.3
 coverage==5.1
-Django==3.0.7
+Django==3.1.6
 django-filter==2.3.0
 dparse==0.5.1
 gitdb==4.0.5
