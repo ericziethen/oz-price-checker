@@ -37,7 +37,7 @@ pytest==5.4.3
 pytest-cov==2.9.0
 pytest-django==3.9.0
 pytz==2020.1
-PyYAML==5.3.1
+PyYAML==5.4
 requests==2.23.0
 safety==1.9.0
 selenium==3.141.0
